@@ -1,0 +1,41 @@
+During startup - Warning messages:
+1: Setting LC_COLLATE=C.UTF-8 failed 
+2: Setting LC_CTYPE=C.UTF-8 failed 
+3: Setting LC_MONETARY=C.UTF-8 failed 
+4: Setting LC_TIME=C.UTF-8 failed 
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+n=90 sites=9 treated=60
+
+==== NutNet e247：施氮对 ANPP 的因果效应 ====
+ATE = 124.4 g/m2 (SE 24.6) 95%CI [76.1, 172.7]
+
+best linear projection:
+
+Best linear projection of the conditional average treatment effect.
+Confidence intervals are cluster- and heteroskedasticity-robust (HC3):
+
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept)   124.379    517.757  0.2402   0.8108
+MAT_v2        287.661   8847.707  0.0325   0.9741
+MAP_v2        -88.337  17975.068 -0.0049   0.9961
+PET          -639.051   7519.254 -0.0850   0.9325
+AI             21.015  16057.025  0.0013   0.9990
+N_Dep          99.972   2585.727  0.0387   0.9693
+elevation     116.960   2250.654  0.0520   0.9587
+pH            321.624    209.805  1.5330   0.1292
+soilC_0015    -87.452    528.739 -0.1654   0.8690
+year_trt       41.226   1123.311  0.0367   0.9708
+
+
+对照：单独加 P 的 ATE = 65.5 g/m2 (SE 25.6)
+== NutNet 原型完成 ==

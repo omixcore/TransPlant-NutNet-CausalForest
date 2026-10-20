@@ -1,0 +1,11 @@
+# R
+rlibs/
+*.RData
+*.rds
+.Rhistory
+
+# 原始数据（按 README 中 DOI 重新下载）
+data/
+
+# 输出大文件保留图表与日志
+output/*.rds
