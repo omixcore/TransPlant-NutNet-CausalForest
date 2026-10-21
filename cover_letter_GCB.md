@@ -16,9 +16,11 @@ Using the TransPlant network (20 mountain-grassland regions, nine countries, 41 
 
 We believe this work fits GCB's scope in three ways. It addresses a **global-change driver** (experimentally imposed warming) with a **mechanistic, process-level link** to community response (the colonisation–extinction accounting, with a transplant comparison, a within-site placebo diagnostic, a separate Nutrient Network fertilisation positive control, and an anti-circularity design for the thermal-preference estimates). Its conclusions are **not site-specific**: the network spans nine countries across Asia, Europe and North America, and the finding that *averages mislead* — different regional point estimates, decoupling of flux from net change — is itself the generalisable message for the large body of distributed warming experiments whose data already exist in public archives. Finally, the framework is immediately reusable: all data are public (OSF, EDI), the analysis scripts and recorded outputs are available on GitHub and Gitee; source data must be obtained from the cited archives.
 
-[Confirm exclusivity of submission before sending.] [Complete author approval, CRediT roles, ORCID iDs, funding, and conflict disclosures before submission.]
+[Confirm exclusivity of submission before sending.] [Confirm co-author approval, CRediT roles, ORCID iDs, and conflict disclosures before submission.]
 
 Suggested reviewers: [to be completed]
 
 Sincerely,
-[Corresponding author, author and co-author approval to be completed before submission]
+Fei Liang
+Corresponding author
+fyliangfei@163.com

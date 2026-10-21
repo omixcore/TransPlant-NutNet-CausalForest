@@ -12,9 +12,19 @@
 
 **Running title:** Turnover after downslope transplantation
 
-**Authors:** [Author list, affiliations and ORCID iDs — to be completed]
+**Authors:** Xiaofeng Song¹,†; Pengyu Chen¹,†; Fei Liang²,*
 
-**Correspondence:** [corresponding author email]
+¹ North Henan Medical University, Xinxiang 453003, China.
+
+² Key Laboratory of Tropical Fruit Biology of Ministry of Agriculture, South Subtropical Crops Research Institute, Chinese Academy of Tropical Agricultural Sciences, Zhanjiang, China.
+
+† These authors contributed equally to this work.
+
+**Author emails:** Xiaofeng Song, songxiaofeng109@163.com; Pengyu Chen, 15803747006@163.com.
+
+**ORCID iDs:** [To be supplied by the authors.]
+
+**Correspondence:** Fei Liang, fyliangfei@163.com.
 
 **Keywords:** causal inference; generalized random forests; heterogeneous treatment effects; transplant experiment; climate change; mountain grassland; species richness; community turnover; Nutrient Network; transient dynamics
 
@@ -199,7 +209,7 @@ Analysis scripts and recorded outputs: https://github.com/omixcore/TransPlant-Nu
 
 ## Acknowledgements
 
-We thank the TransPlant and Nutrient Network communities for collecting and sharing the data. [Funding to be completed.]
+We thank the TransPlant and Nutrient Network communities for collecting and sharing the data. This work was supported by the Henan Province Science and Technology Research Project (Grant No. 252102310465) and the Henan Private Universities Characteristic Development Program (Grant No. SJ2025MBTS03).
 
 ## Conflict of interest
 
