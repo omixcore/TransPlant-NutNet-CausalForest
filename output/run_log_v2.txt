@@ -1,8 +1,8 @@
 During startup - Warning messages:
-1: Setting LC_COLLATE=C.UTF-8 failed 
-2: Setting LC_CTYPE=C.UTF-8 failed 
-3: Setting LC_MONETARY=C.UTF-8 failed 
-4: Setting LC_TIME=C.UTF-8 failed 
+1: Setting LC_COLLATE=C.UTF-8 failed
+2: Setting LC_CTYPE=C.UTF-8 failed
+3: Setting LC_MONETARY=C.UTF-8 failed
+4: Setting LC_TIME=C.UTF-8 failed
 
 Attaching package: 'dplyr'
 
@@ -14,9 +14,9 @@ The following objects are masked from 'package:base':
 
     intersect, setdiff, setequal, union
 
-物种名匹配率：修复前 67.0% → 修复后 88.5%
+Taxon match rate: before 67.0% → after 88.5%
 
-### 各协变量 NA 数（n = 1198 ）###
+### Missing values by covariate(n = 1198 )###
 orig_temp    NA=0
 orig_prec    NA=0
 d_temp_y     NA=0
@@ -29,25 +29,25 @@ cwm_Npc      NA=278
 prop_woody   NA=278
 Year         NA=0
 
-==== v2 结果 1：物种丰富度变化（全样本） ====
+==== v2 outcome 1: richness change (full sample) ====
 n=872 clusters=156 ATE=0.8394 SE=0.4453 95%CI=[-0.0334, 1.7121]
 best linear projection:
 
 Best linear projection of the conditional average treatment effect.
 Confidence intervals are cluster- and heteroskedasticity-robust (HC3):
 
-             Estimate Std. Error t value  Pr(>|t|)    
-(Intercept)  0.839364   0.426653  1.9673 0.0494668 *  
+             Estimate Std. Error t value  Pr(>|t|)
+(Intercept)  0.839364   0.426653  1.9673 0.0494668 *
 orig_temp   -2.299134   0.626947 -3.6672 0.0002603 ***
-orig_prec   -5.460343   2.398227 -2.2768 0.0230413 *  
-d_temp_y     0.220793   0.550333  0.4012 0.6883732    
-d_prec_y    -3.512582   2.460423 -1.4276 0.1537600    
-d_elev       0.600269   0.667292  0.8996 0.3686060    
-base_rich   -2.395400   0.777187 -3.0821 0.0021206 ** 
-cwm_Hgt      0.268493   0.560066  0.4794 0.6317795    
-cwm_Npc     -1.064169   0.702075 -1.5157 0.1299501    
-prop_woody   0.224865   0.643323  0.3495 0.7267722    
-Year        -0.033804   0.326105 -0.1037 0.9174629    
+orig_prec   -5.460343   2.398227 -2.2768 0.0230413 *
+d_temp_y     0.220793   0.550333  0.4012 0.6883732
+d_prec_y    -3.512582   2.460423 -1.4276 0.1537600
+d_elev       0.600269   0.667292  0.8996 0.3686060
+base_rich   -2.395400   0.777187 -3.0821 0.0021206 **
+cwm_Hgt      0.268493   0.560066  0.4794 0.6317795
+cwm_Npc     -1.064169   0.702075 -1.5157 0.1299501
+prop_woody   0.224865   0.643323  0.3495 0.7267722
+Year        -0.033804   0.326105 -0.1037 0.9174629
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -57,14 +57,14 @@ Best linear fit using forest predictions (on held-out data)
 as well as the mean forest prediction as regressors, along
 with one-sided heteroskedasticity-robust (HC3) SEs:
 
-                               Estimate Std. Error t value  Pr(>t)  
+                               Estimate Std. Error t value  Pr(>t)
 mean.forest.prediction          0.94649    0.61020  1.5511 0.06062 .
-differential.forest.prediction  0.53137    0.65193  0.8151 0.20762  
+differential.forest.prediction  0.53137    0.65193  0.8151 0.20762
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
-==== v2 结果 2：总盖度 LRR（全样本） ====
+==== v2 outcome 2: total cover LRR (full sample) ====
 n=872 clusters=156 ATE=0.0206 SE=0.0345 95%CI=[-0.0470, 0.0882]
 best linear projection:
 
@@ -96,13 +96,13 @@ differential.forest.prediction -5.146417   1.070518 -4.8074 1.0000
 
 Warning message:
 `geom_errorbarh()` was deprecated in ggplot2 4.0.0.
-i Please use the `orientation` argument of `geom_errorbar()` instead. 
+i Please use the `orientation` argument of `geom_errorbar()` instead.
 `height` was translated to `width`.
 
-== 安慰剂检验（100 次）==
-placebo ATE mean=0.0642 sd=0.2359 | 真实 ATE=0.8394
+== Placebo test (100 permutations)==
+placebo ATE mean=0.0642 sd=0.2359 | Observed ATE=0.8394
 
-== 连续处理（每 +1°C 移栽温差）==
+== Continuous treatment (per +1 °C transplantation temperature difference)==
 n=872 ATE per C=0.5471 SE=0.2886
 
-== v2 完成 ==
+== v2 complete ==

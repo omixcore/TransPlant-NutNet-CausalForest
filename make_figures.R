@@ -1,8 +1,8 @@
 # =====================================================================
-# make_figures.R — 手稿主图（GCB 规格，300 dpi，170 mm 双栏宽）
-# Fig 1 研究系统与设计 | Fig 2 平均效应与安慰剂 | Fig 3 谁会获益
-# Fig 4 区域间效应翻转 | Fig 5 移栽后时间动态 | Fig 6 NutNet 阳性对照
-# 依赖：已跑完 analysis_causal_forest_v3.R / analysis_event_time.R / analysis_nutnet.R
+# make_figures.R — Main manuscript figures (GCB dimensions, 300 dpi, 170 mm double-column width)
+# Fig 1 Study system and design | Fig 2 Average effects and placebo | Fig 3 Who benefits
+# Fig 4 Regional effect reversals | Fig 5 Time since transplantation | Fig 6 NutNet positive control
+# Prerequisite: run analysis_causal_forest_v3.R / analysis_event_time.R / analysis_nutnet.R
 # =====================================================================
 .libPaths(c("project/rlibs", .libPaths()))
 suppressPackageStartupMessages({
@@ -21,7 +21,7 @@ d2$CATE_lrr  <- predict(lrr$cf)$predictions
 X_names <- c("orig_temp", "orig_prec", "d_temp_y", "d_prec_y", "d_elev",
              "base_rich", "cwm_SLA", "cwm_Hgt", "cwm_Npc", "prop_woody", "Year")
 
-## ---- 统一主题与配色 ----
+## ---- Shared theme and palette ----
 POS <- "#2C6E9B"; NEG <- "#B4462F"; WARM <- "#C4622D"; COOL <- "#2C6E9B"; GREY <- "grey35"
 theme_pub <- theme_classic(base_size = 9) +
   theme(
@@ -38,7 +38,7 @@ theme_pub <- theme_classic(base_size = 9) +
     plot.margin = margin(4, 6, 4, 4)
   )
 theme_set(theme_pub)
-## ---- 同时导出 PNG（300 dpi）与 PDF（矢量，cairo_pdf）----
+## ---- Export PNG (300 dpi) and vector PDF (cairo_pdf)----
 save_both <- function(plot, name, w, h) {
   ggsave(file.path(out, paste0(name, ".png")), type = "cairo", plot,
          width = w, height = h, dpi = 300, bg = "white")
@@ -47,10 +47,10 @@ save_both <- function(plot, name, w, h) {
   cat("saved", name, "(.png + .pdf)\n")
 }
 
-W2 <- 6.7   # 单栏/整页宽（inch）
+W2 <- 6.7   # single-column/full-page width (inches)
 
-## ===================== Fig 1: 研究系统与设计 =====================
-## (a) 站点地图
+## ===================== Fig 1: Study system and design =====================
+## (a) Site map
 e <- new.env(); load("project/data/TransPlantNetwork.RData", envir = e)
 cl <- as.data.frame(e$climdata)
 site_xy <- cl %>% group_by(Region = gradient, destSiteID) %>%
@@ -82,7 +82,7 @@ p1a <- ggplot() +
         axis.title = element_blank(), panel.grid = element_blank(),
         legend.position = "right", legend.box = "vertical")
 
-## (b) 设计示意
+## (b) Design diagram
 p1b <- ggplot() +
   annotate("segment", x = 0.4, y = 9.1, xend = 9.6, yend = 2.2,
            colour = "grey55", linewidth = 0.7) +
@@ -104,7 +104,7 @@ p1b <- ggplot() +
   theme_void() +
   labs(title = "(b) Paired design")
 
-## (c) 处理剂量分布
+## (c) Dose distribution
 dose <- d2 %>% filter(W_bin == 1)
 p1c <- ggplot(dose, aes(W_cont)) +
   geom_histogram(bins = 30, fill = WARM, colour = "white", linewidth = 0.15, alpha = .9) +
@@ -118,7 +118,7 @@ p1c <- ggplot(dose, aes(W_cont)) +
 p1 <- p1a / (p1b | p1c) + plot_layout(heights = c(1.55, 1))
 save_both(p1, "fig1_study_system", W2, 5.9)
 
-## ===================== Fig 2: 平均效应与安慰剂 =====================
+## ===================== Fig 2: Average effects and placebo =====================
 mk_hist <- function(x, fill, xlab, ttl) {
   ggplot(tibble(v = x), aes(v)) +
     geom_histogram(bins = 42, fill = fill, colour = "white", linewidth = 0.12, alpha = .9) +
@@ -143,7 +143,7 @@ p2c <- ggplot(tibble(v = pl), aes(v)) +
 p2 <- p2a + p2b + p2c + plot_layout(widths = c(1, 1, 1))
 save_both(p2, "fig2_average_and_placebo", W2, 2.5)
 
-## ===================== Fig 3: 谁获益（异质性） =====================
+## ===================== Fig 3: Who benefits (heterogeneity) =====================
 bin_cate <- function(xv, lab, ttl, colour = POS) {
   tb <- d2 %>% transmute(x = .data[[xv]], y = CATE_rich) %>%
     mutate(bin = ntile(x, 7)) %>%
@@ -160,7 +160,7 @@ bin_cate <- function(xv, lab, ttl, colour = POS) {
 p3a <- bin_cate("orig_temp", "Source temperature (deg C)", "(a) Source climate")
 p3b <- bin_cate("base_rich", "Baseline species richness", "(b) Baseline diversity")
 
-## (c) 二维响应面：source temperature x baseline richness
+## (c) Two-dimensional response surface:source temperature x baseline richness
 Xm <- as.matrix(d2[, X_names])
 mu <- colMeans(Xm, na.rm = TRUE)
 sdv <- apply(Xm, 2, sd, na.rm = TRUE); sdv[sdv == 0] <- 1
@@ -188,7 +188,7 @@ p3c <- ggplot(grid, aes(orig_temp, base_rich, fill = CATE)) +
 p3 <- p3a + p3b + p3c + plot_layout(widths = c(1, 1, 1.15))
 save_both(p3, "fig3_who_benefits", W2, 2.6)
 
-## ===================== Fig 4: 区域间效应翻转 =====================
+## ===================== Fig 4: Regional effect reversals =====================
 run_region <- function(r) {
   s <- d2 %>% filter(Region == r)
   if (n_distinct(s$turf_key) < 8) return(NULL)
@@ -215,7 +215,7 @@ p4 <- ggplot(reg, aes(ate, reorder(sub("_", " ", Region), ate))) +
        subtitle = "Forests re-fitted within region; bars = 95% CI")
 save_both(p4, "fig4_region_ate", 4.6, 3.0)
 
-## ===================== Fig 5: 移栽后时间动态 =====================
+## ===================== Fig 5: Time since transplantation =====================
 d2 <- d2 %>% mutate(ys = Year - base_year)
 
 ev <- d2 %>% group_by(ys) %>%
@@ -229,7 +229,7 @@ p5a <- ggplot(ev, aes(ys, m)) +
   labs(x = "Years since transplant", y = "Estimated CATE (richness)",
        title = "(a) Event-time profile", subtitle = "bins with n >= 20 turf-years")
 
-## 分年段重估（与手稿 Table 3 一致）
+## Re-estimate by phase (as in manuscript Table 3)
 run_phase <- function(sub, lab) {
   X <- scale(as.matrix(sub[, X_names])); X[is.na(X)] <- 0
   cf <- causal_forest(X, sub$Y_rich, sub$W_bin, W.hat = sub$W_hat_site,
@@ -259,7 +259,7 @@ p5b <- ggplot(ph, aes(ate, phase)) +
 p5 <- p5a + p5b + plot_layout(widths = c(1.25, 1))
 save_both(p5, "fig5_event_time", W2, 2.6)
 
-## ===================== Fig 6: NutNet 阳性对照 =====================
+## ===================== Fig 6: NutNet positive control =====================
 nn <- read.csv(file.path(out, "nutnet_plot_cate.csv"))
 ctrl <- nn %>% filter(trt == "Ctrl")
 res_n <- bind_rows(
@@ -275,7 +275,7 @@ p6a <- ggplot(res_n, aes(est, term)) +
   labs(x = "ATE on ANPP (g g/m2)", y = NULL, title = "(a) Fertilization effects",
        subtitle = "9 sites, 90 fertilized vs 30 control plots")
 
-## 站点尺度 CATE（N/NP）
+## Site-level CATE (N/NP)
 site_c <- nn %>% filter(trt != "Ctrl") %>%
   group_by(site) %>% summarise(cate = mean(CATE), n = n(), .groups = "drop")
 p6b <- ggplot(site_c, aes(cate, reorder(site, cate))) +
@@ -290,7 +290,7 @@ p6b <- ggplot(site_c, aes(cate, reorder(site, cate))) +
 p6 <- p6a + p6b + plot_layout(widths = c(1, 1))
 save_both(p6, "fig6_nutnet", W2, 2.5)
 
-cat("== 图件完成 ==\n")
+cat("== Figures complete ==\n")
 for (f in c("fig1_study_system.png", "fig2_average_and_placebo.png", "fig3_who_benefits.png",
             "fig4_region_ate.png", "fig5_event_time.png", "fig6_nutnet.png"))
   cat(sprintf("  %-28s %s\n", f, file.exists(file.path(out, f))))

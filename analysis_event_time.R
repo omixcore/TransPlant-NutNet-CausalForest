@@ -1,4 +1,4 @@
-# v3b：事件时间分析（移栽后年数）+ 期内 OLS 交叉验证
+# v3b:Event-time analysis (years since transplant) and phase-wise OLS cross-check
 .libPaths(c("project/rlibs", .libPaths()))
 suppressPackageStartupMessages({library(grf); library(dplyr); library(ggplot2)})
 set.seed(20261021)
@@ -9,12 +9,12 @@ d2 <- rich$d2
 X_names <- c("orig_temp", "orig_prec", "d_temp_y", "d_prec_y", "d_elev",
              "base_rich", "cwm_SLA", "cwm_Hgt", "cwm_Npc", "prop_woody", "Year")
 
-## 基线年已在 v3 面板中按复合键算出
+## Baseline year already derived in v3 using the composite key
 d2 <- d2 %>% mutate(ys = Year - base_year)
 
-cat("== 移栽后年数分布 ==\n"); print(table(d2$ys))
+cat("== Years-since-transplant distribution ==\n"); print(table(d2$ys))
 
-## ---- 1) 分年段的森林 ATE
+## ---- 1) Forest ATE by phase
 run_sub <- function(sub, lab) {
   X <- scale(as.matrix(sub[, X_names])); X[is.na(X)] <- 0
   cf <- causal_forest(X, sub$Y_rich, sub$W_bin, W.hat = sub$W_hat_site,
@@ -26,13 +26,13 @@ run_sub <- function(sub, lab) {
   invisible(c(a[1], a[2], nrow(sub)))
 }
 
-cat("\n== 分移栽后年段的 ATE（丰富度变化）==\n")
+cat("\n== ATE by transplant phase (richness change)==\n")
 run_sub(d2 %>% filter(ys == 1), "year 1")
 run_sub(d2 %>% filter(ys == 2), "year 2")
 run_sub(d2 %>% filter(ys >= 3), "year >= 3")
 run_sub(d2 %>% filter(ys >= 2), "year >= 2 (established)")
 
-## ---- 2) 事件时间曲线：CATE 均值
+## ---- 2) Event-time curve: mean CATE
 cate <- predict(rich$cf)$predictions
 d2$CATE <- cate
 ev <- d2 %>% group_by(ys) %>%
@@ -48,7 +48,7 @@ p <- ggplot(ev, aes(ys, m)) +
   theme_minimal(base_size = 12)
 ggsave("project/output/fig5_event_time_v3.png", p, width = 6, height = 4, dpi = 200)
 
-## ---- 3) OLS 交互项 + 样方聚类稳健标准误
+## ---- 3) OLS interaction and turf-clustered robust SE
 ols_cluster <- function(formula, data, cluster) {
   m <- lm(formula, data = data)
   X <- model.matrix(m); y <- model.response(model.frame(m))
@@ -66,18 +66,18 @@ ols_cluster <- function(formula, data, cluster) {
              p = 2*pt(-abs(coef(m)/se), df = G-1))
 }
 
-cat("\n== OLS：Y_rich ~ W_bin * years_since + region FE（样方聚类 SE）==\n")
+cat("\n== OLS:Y_rich ~ W_bin * years_since + region FE(turf-clustered SE)==\n")
 o <- ols_cluster(Y_rich ~ W_bin * ys + factor(Region), d2, d2$turf_key)
 print(o %>% filter(grepl("W_bin|ys", term)) %>% mutate(across(c(est, se, t, p), ~round(.x, 3))))
 
-cat("\n== 同规格：仅挪威+Gongga 子集（v2 曾用的区域）==\n")
+cat("\n== Same specification: Norway and Gongga subset (regions used in v2)==\n")
 sub5 <- d2 %>% filter(Region %in% c("CN_Gongga","NO_Gudmedalen","NO_Lavisdalen",
                                     "NO_Skjellingahaugen","NO_Ulvhaugen"))
 o5 <- ols_cluster(Y_rich ~ W_bin * ys + factor(Region), sub5, sub5$turf_key)
 print(o5 %>% filter(grepl("W_bin|ys", term)) %>% mutate(across(c(est, se, t, p), ~round(.x, 3))))
-cat("子集 n =", nrow(sub5), "| turfs =", n_distinct(sub5$turf_key), "\n")
+cat("Subset n =", nrow(sub5), "| turfs =", n_distinct(sub5$turf_key), "\n")
 
-cat("\n== 亚组 ATE（按区域）==\n")
+cat("\n== Subgroup ATE by region==\n")
 for (r in sort(unique(d2$Region))) {
   s <- d2 %>% filter(Region == r)
   if (n_distinct(s$turf_key) < 8) next

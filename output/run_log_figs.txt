@@ -1,8 +1,8 @@
 During startup - Warning messages:
-1: Setting LC_COLLATE=C.UTF-8 failed 
-2: Setting LC_CTYPE=C.UTF-8 failed 
-3: Setting LC_MONETARY=C.UTF-8 failed 
-4: Setting LC_TIME=C.UTF-8 failed 
+1: Setting LC_COLLATE=C.UTF-8 failed
+2: Setting LC_CTYPE=C.UTF-8 failed
+3: Setting LC_MONETARY=C.UTF-8 failed
+4: Setting LC_TIME=C.UTF-8 failed
 saved fig1_study_system (.png + .pdf)
 saved fig2_average_and_placebo (.png + .pdf)
 saved fig3_who_benefits (.png + .pdf)
@@ -11,16 +11,16 @@ Warning messages:
 i This can happen when ggplot fails to infer the correct grouping structure in
   the data.
 i Did you forget to specify a `group` aesthetic or to convert a numerical
-  variable into a factor? 
+  variable into a factor?
 2: The following aesthetics were dropped during statistical transformation: fill.
 i This can happen when ggplot fails to infer the correct grouping structure in
   the data.
 i Did you forget to specify a `group` aesthetic or to convert a numerical
-  variable into a factor? 
+  variable into a factor?
 saved fig4_region_ate (.png + .pdf)
 saved fig5_event_time (.png + .pdf)
 saved fig6_nutnet (.png + .pdf)
-== 图件完成 ==
+== Figures complete ==
   fig1_study_system.png        TRUE
   fig2_average_and_placebo.png TRUE
   fig3_who_benefits.png        TRUE

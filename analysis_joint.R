@@ -71,7 +71,7 @@ mm <- length(unique(cl))
 V  <- (t(Gc) %*% Gc) / n_total^2     # cluster-robust cov of the four ATEs
 V  <- V * mm / (mm - 1)              # small-sample correction, m clusters
 se <- sqrt(diag(V))
-cat("\n### 边际 SE 对比（本脚本 vs 原管线）###\n")
+cat("\n### Marginal SE comparison (this script vs original pipeline)###\n")
 cat(sprintf("net:      joint %.4f | grf %.4f\ngains:    joint %.4f | grf %.4f\nlosses:   joint %.4f | grf %.4f\nturnover: joint %.4f | grf %.4f\n",
             se[1], res$rich$ate[2], se[2], 0.4654, se[3], 0.3007, se[4], 0.5995))
 
@@ -92,7 +92,7 @@ tests <- rbind(
   "flux identity: turnover - net = 0"                   = z(t_flux),
   "symmetry: colonisations - extinctions = 0"           = z(t_sym))
 tests <- round(tests, 4)
-cat("\n### 恒等式联合检验 ###\n"); print(tests)
+cat("\n### Joint identity tests ###\n"); print(tests)
 
 ## ---------------------------------------------------------------- 5. export
 ate_tbl <- data.frame(

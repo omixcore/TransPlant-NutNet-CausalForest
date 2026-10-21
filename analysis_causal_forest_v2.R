@@ -1,9 +1,9 @@
 # =====================================================================
-# 因果森林 v2：mergedtaxa 分类匹配修复 → 全样本重估
-# 相对 v1 的改动：
-#   1) dat 物种名先经 mergedtaxa 映射为全名再 join 性状表
-#   2) 性状兜底链：站点实测 → TRY 物种级均值
-#   3) 输出文件加 _v2 后缀
+# Causal forest v2: repair taxon matching with mergedtaxa and re-estimate on the full sample
+# Changes from v1:
+#   1) map dat taxon names to full names via mergedtaxa before joining traits
+#   2) trait fallback: site measurements, then TRY species means
+#   3) add the _v2 suffix to output files
 # =====================================================================
 
 .libPaths(c("project/rlibs", .libPaths()))
@@ -15,7 +15,7 @@ library(patchwork)
 
 set.seed(20261021)
 
-## ---------------------------------------------------------------- 1. 载入 + 分类修复
+## ---------------------------------------------------------------- 1. Load data and repair taxonomy
 e <- new.env()
 load("project/data/TransPlantNetwork.RData", envir = e)
 dat    <- as.data.frame(e$dat)
@@ -33,9 +33,9 @@ dat <- dat %>%
   dplyr::select(-taxa) %>%
   distinct()
 n_fixed <- mean(dat$SpeciesName %in% traits$SpeciesName)
-cat(sprintf("物种名匹配率：修复前 %.1f%% → 修复后 %.1f%%\n", 100 * n_raw, 100 * n_fixed))
+cat(sprintf("Taxon match rate: before %.1f%% → after %.1f%%\n", 100 * n_raw, 100 * n_fixed))
 
-## ---------------------------------------------------------------- 2. 气候变量
+## ---------------------------------------------------------------- 2. Climate variables
 gs <- clim %>% filter(month %in% 5:9)
 normals <- gs %>% filter(year <= 2010) %>%
   group_by(destSiteID, var) %>%
@@ -56,7 +56,7 @@ yearly <- gs %>%
 site_elev <- clim %>% group_by(destSiteID) %>%
   summarise(elev = mean(unique(elevation), na.rm = TRUE), .groups = "drop")
 
-## ---------------------------------------------------------------- 3. turf × 年 面板
+## ---------------------------------------------------------------- 3. Turf × year panel
 panel0 <- dat %>%
   group_by(Region, originSiteID, destSiteID, Treatment, turfID, Year) %>%
   summarise(richness = n_distinct(SpeciesName), tot_cover = sum(Cover, na.rm = TRUE), .groups = "drop") %>%
@@ -75,7 +75,7 @@ panel <- panel0 %>%
     Y_lrr  = log((tot_cover + 1) / (base_cover + 1))
   )
 
-## ---------------------------------------------------------------- 4. 性状：站点实测 → TRY 物种级兜底
+## ---------------------------------------------------------------- 4. Traits: site measurements with TRY species-level fallback
 sp_fallback <- traits %>%
   mutate(SLA_fb = TSLA_cm2_g, Hgt_fb = TPlant_Veg_Height_cm, Npc_fb = TN_percent) %>%
   group_by(SpeciesName) %>%
@@ -116,7 +116,7 @@ cwm <- sp_base %>%
     .groups = "drop"
   )
 
-## ---------------------------------------------------------------- 5. 合并协变量
+## ---------------------------------------------------------------- 5. Merge covariates
 ana <- panel %>%
   left_join(normals, by = c("originSiteID" = "destSiteID")) %>%
   rename(orig_temp = temp_normal, orig_prec = prec_normal) %>%
@@ -142,16 +142,16 @@ ana <- panel %>%
 X_names <- c("orig_temp", "orig_prec", "d_temp_y", "d_prec_y", "d_elev",
              "base_rich", "cwm_SLA", "cwm_Hgt", "cwm_Npc", "prop_woody", "Year")
 
-# 设计倾向得分：处理在站点层面分配，用站点内经验处理率（裁剪防权重爆炸）
+# Design propensity: treatment assigned at site level; clip empirical within-site rates to avoid extreme weights
 ana <- ana %>%
   group_by(destSiteID) %>%
   mutate(W_hat_site = pmin(pmax(mean(W_bin), 0.1), 0.9)) %>%
   ungroup()
 
-cat("\n### 各协变量 NA 数（n =", nrow(ana), "）###\n")
+cat("\n### Missing values by covariate(n =", nrow(ana), ")###\n")
 for (v in X_names) cat(sprintf("%-12s NA=%d\n", v, sum(is.na(ana[[v]]))))
 
-## ---------------------------------------------------------------- 6. 因果森林
+## ---------------------------------------------------------------- 6. Causal forest
 run_cf <- function(Yname, label) {
   d2 <- ana %>% drop_na(all_of(c(Yname, X_names, "turfID")))
   Xm <- as.matrix(d2[, X_names])
@@ -171,10 +171,10 @@ run_cf <- function(Yname, label) {
   list(cf = cf, d2 = d2, ate = ate, label = label)
 }
 
-res_rich <- run_cf("Y_rich", "v2 结果 1：物种丰富度变化（全样本）")
-res_lrr  <- run_cf("Y_lrr",  "v2 结果 2：总盖度 LRR（全样本）")
+res_rich <- run_cf("Y_rich", "v2 outcome 1: richness change (full sample)")
+res_lrr  <- run_cf("Y_lrr",  "v2 outcome 2: total cover LRR (full sample)")
 
-## ---------------------------------------------------------------- 7. 图（英文标签）
+## ---------------------------------------------------------------- 7. Figures (English labels)
 theme_set(theme_minimal(base_size = 12))
 plot_dir <- "project/output"
 
@@ -225,7 +225,7 @@ p3 <- bind_rows(blp_tbl(res_rich, "Richness change"), blp_tbl(res_lrr, "Cover LR
        title = "Best linear projection of CATE (full sample)")
 ggsave(file.path(plot_dir, "fig3_blp_v2.png"), p3, width = 9, height = 4.5, dpi = 200)
 
-## ---------------------------------------------------------------- 8. 安慰剂 + 连续处理强度
+## ---------------------------------------------------------------- 8. Placebo and continuous treatment dose
 placebo_ate <- replicate(100, {
   d2 <- res_rich$d2
   wp <- ave(d2$W_bin, d2$destSiteID, d2$Year, FUN = function(z) sample(z))
@@ -235,8 +235,8 @@ placebo_ate <- replicate(100, {
                         num.trees = 1000, min.node.size = 5)
   average_treatment_effect(cf_p)[1]
 })
-cat("\n== 安慰剂检验（100 次）==\n")
-cat(sprintf("placebo ATE mean=%.4f sd=%.4f | 真实 ATE=%.4f\n",
+cat("\n== Placebo test (100 permutations)==\n")
+cat(sprintf("placebo ATE mean=%.4f sd=%.4f | Observed ATE=%.4f\n",
             mean(placebo_ate), sd(placebo_ate), res_rich$ate[1]))
 
 d2c <- ana %>% drop_na(all_of(c("Y_rich", X_names, "turfID")))
@@ -244,13 +244,13 @@ Xc <- scale(as.matrix(d2c[, X_names])); Xc[is.na(Xc)] <- 0
 cf_c <- causal_forest(Xc, d2c$Y_rich, d2c$W_cont, W.hat = d2c$W_hat_site,
                       clusters = as.numeric(factor(d2c$turfID)), num.trees = 4000)
 ate_c <- average_treatment_effect(cf_c)
-cat("\n== 连续处理（每 +1°C 移栽温差）==\n")
+cat("\n== Continuous treatment (per +1 °C transplantation temperature difference)==\n")
 cat(sprintf("n=%d ATE per C=%.4f SE=%.4f\n", nrow(d2c), ate_c[1], ate_c[2]))
 
-## ---------------------------------------------------------------- 9. 保存
+## ---------------------------------------------------------------- 9. Save outputs
 write.csv(res_rich$d2 %>% mutate(CATE_rich = predict(res_rich$cf)$predictions,
                                  CATE_lrr  = predict(res_lrr$cf)$predictions),
           file.path(plot_dir, "turf_year_cate_v2.csv"), row.names = FALSE)
 saveRDS(list(rich = res_rich, lrr = res_lrr, cont = cf_c),
         file.path(plot_dir, "cf_results_v2.rds"))
-cat("\n== v2 完成 ==\n")
+cat("\n== v2 complete ==\n")

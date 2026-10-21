@@ -1,8 +1,8 @@
 During startup - Warning messages:
-1: Setting LC_COLLATE=C.UTF-8 failed 
-2: Setting LC_CTYPE=C.UTF-8 failed 
-3: Setting LC_MONETARY=C.UTF-8 failed 
-4: Setting LC_TIME=C.UTF-8 failed 
+1: Setting LC_COLLATE=C.UTF-8 failed
+2: Setting LC_CTYPE=C.UTF-8 failed
+3: Setting LC_MONETARY=C.UTF-8 failed
+4: Setting LC_TIME=C.UTF-8 failed
 
 Attaching package: 'dplyr'
 
@@ -16,7 +16,7 @@ The following objects are masked from 'package:base':
 
 n=90 sites=9 treated=60
 
-==== NutNet e247：施氮对 ANPP 的因果效应 ====
+==== NutNet e247: causal effect of nitrogen addition on ANPP ====
 ATE = 124.4 g/m2 (SE 24.6) 95%CI [76.1, 172.7]
 
 best linear projection:
@@ -37,5 +37,5 @@ soilC_0015    -87.452    528.739 -0.1654   0.8690
 year_trt       41.226   1123.311  0.0367   0.9708
 
 
-对照：单独加 P 的 ATE = 65.5 g/m2 (SE 25.6)
-== NutNet 原型完成 ==
+P-only ATE = 65.5 g/m2 (SE 25.6)
+== NutNet prototype complete ==

@@ -1,7 +1,7 @@
 .libPaths(c("project/rlibs", .libPaths()))
 library(dplyr)
 source_local <- function(f) source(f)
-# 复用主管线的数据构建部分（到第 5 步），此处快速重建
+# Reuse primary pipeline construction through step 5
 e <- new.env()
 load("project/data/TransPlantNetwork.RData", envir = e)
 dat <- as.data.frame(e$dat); clim <- as.data.frame(e$climdata); traits <- as.data.frame(e$alltraits)
@@ -52,7 +52,7 @@ ana <- panel %>%
          d_temp_y=coalesce(dest_temp_y-orig_temp, dest_temp-orig_temp),
          d_prec_y=coalesce(dest_prec_y-orig_prec,0), d_elev=dest_elev-orig_elev)
 
-cat("\n### 各协变量 NA 数（n=", nrow(ana), "）###\n")
+cat("\n### Missing values by covariate(n=", nrow(ana), ")###\n")
 for (v in c("orig_temp","orig_prec","d_temp_y","d_prec_y","d_elev","base_rich","cwm_SLA","cwm_Hgt","cwm_Npc","prop_woody")) {
   cat(sprintf("%-12s NA=%d\n", v, sum(is.na(ana[[v]]))))
 }
@@ -69,7 +69,7 @@ run <- function(Xn, lab, target = "all") {
   cat(sprintf("\n[%s | target=%s] n=%d clusters=%d ATE=%.3f SE=%.3f CI=[%.3f, %.3f]\n",
       lab, target, nrow(d2), length(unique(d2$turfID)), ate[1], ate[2], ate[1]-1.96*ate[2], ate[1]+1.96*ate[2]))
 }
-run(X1, "仅气候协变量")
-run(X3, "气候+基线丰富度")
-run(X2, "全协变量")
-run(X3, "气候+基线丰富度(overlap)", "overlap")
+run(X1, "Climate covariates only")
+run(X3, "Climate and baseline richness")
+run(X2, "All covariates")
+run(X3, "Climate and baseline richness (overlap)", "overlap")

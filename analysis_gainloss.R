@@ -45,7 +45,7 @@ gl <- gl %>% left_join(base_n, by = "turf_key") %>%
          net    = gains - losses,
          turnover = gains + losses)
 
-cat("### 定殖/灭绝分解 ###\n")
+cat("### Colonisation/extinction decomposition ###\n")
 cat("turf-years:", nrow(gl), "\n")
 cat(sprintf("mean gains %.3f | mean losses %.3f | mean net %.3f | mean turnover %.3f\n",
             mean(gl$gains), mean(gl$losses), mean(gl$net), mean(gl$turnover)))
@@ -79,9 +79,9 @@ run_cf <- function(data, Yname, label) {
   list(cf = cf, d2 = dd, ate = ate, blp = blp)
 }
 
-r_gain <- run_cf(chk, "gains",    "定殖数（colonisations）")
-r_loss <- run_cf(chk, "losses",   "灭绝数（extinctions）")
-r_turn <- run_cf(chk, "turnover", "总周转（gains + losses）")
+r_gain <- run_cf(chk, "gains",    "Colonisations")
+r_loss <- run_cf(chk, "losses",   "Extinctions")
+r_turn <- run_cf(chk, "turnover", "Total turnover (gains + losses)")
 
 ## phase split for turnover (ys = 0 is the baseline year itself and is excluded)
 chk <- chk %>% mutate(ys = Year - base_year)

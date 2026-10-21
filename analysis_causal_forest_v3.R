@@ -1,9 +1,9 @@
 # =====================================================================
-# 因果森林 v3：修复 turfID 跨区域重号导致的基线丢失
-# 相对 v2 的改动：
-#   1) turf_key = Region|originSiteID|destSiteID|turfID，基线年、聚类都基于它
-#   2) CWM 加权均值遇到全 NA 时返回 NA 而不是 NaN
-#   3) 输出 _v3 后缀
+# Causal forest v3: fix baseline loss from duplicate turfIDs across regions
+# Changes from v2:
+#   1) turf_key = Region|originSiteID|destSiteID|turfID, use this key for baseline years and clustering
+#   2) CWM weighted mean returns NA rather than NaN for all-missing input
+#   3) write outputs with the _v3 suffix
 # =====================================================================
 
 .libPaths(c("project/rlibs", .libPaths()))
@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 })
 set.seed(20261021)
 
-## ---------------------------------------------------------------- 1. 载入 + 分类修复
+## ---------------------------------------------------------------- 1. Load data and repair taxonomy
 e <- new.env()
 load("project/data/TransPlantNetwork.RData", envir = e)
 dat    <- as.data.frame(e$dat)
@@ -30,11 +30,11 @@ dat <- dat %>%
   dplyr::select(-taxa) %>%
   distinct()
 n_fixed <- mean(dat$SpeciesName %in% traits$SpeciesName)
-cat(sprintf("物种名匹配率：修复前 %.1f%% → 修复后 %.1f%%\n", 100 * n_raw, 100 * n_fixed))
+cat(sprintf("Taxon match rate: before %.1f%% → after %.1f%%\n", 100 * n_raw, 100 * n_fixed))
 
 dat <- dat %>% mutate(turf_key = paste(Region, originSiteID, destSiteID, turfID, sep = "|"))
 
-## ---------------------------------------------------------------- 2. 气候
+## ---------------------------------------------------------------- 2. Climate
 gs <- clim %>% filter(month %in% 5:9)
 normals <- gs %>% filter(year <= 2010) %>%
   group_by(destSiteID) %>%
@@ -54,12 +54,12 @@ yearly <- gs %>%
 site_elev <- clim %>% group_by(destSiteID) %>%
   summarise(elev = mean(unique(elevation), na.rm = TRUE), .groups = "drop")
 
-## ---------------------------------------------------------------- 3. turf × 年 面板（复合键）
+## ---------------------------------------------------------------- 3. Turf × year panel (composite key)
 panel0 <- dat %>%
   group_by(Region, originSiteID, destSiteID, Treatment, turfID, turf_key, Year) %>%
   summarise(richness = n_distinct(SpeciesName),
             tot_cover = sum(Cover, na.rm = TRUE), .groups = "drop") %>%
-  group_by(turf_key) %>%                       # ← 关键修复
+  group_by(turf_key) %>%                       # <- key fix
   arrange(Year, .by_group = TRUE) %>%
   mutate(base_year = first(Year)) %>%
   ungroup()
@@ -72,7 +72,7 @@ panel <- panel0 %>%
   mutate(Y_rich = richness - base_rich,
          Y_lrr  = log((tot_cover + 1) / (base_cover + 1)))
 
-## ---------------------------------------------------------------- 4. 性状 CWM
+## ---------------------------------------------------------------- 4. Trait CWM
 sp_fallback <- traits %>%
   mutate(SLA_fb = TSLA_cm2_g, Hgt_fb = TPlant_Veg_Height_cm, Npc_fb = TN_percent) %>%
   group_by(SpeciesName) %>%
@@ -99,7 +99,7 @@ sp_base <- dat %>%
   filter(Year == base_year) %>%
   left_join(sp_traits, by = c("Region", "destSiteID", "SpeciesName"))
 
-wm <- function(x, w) {            # 全 NA 时返回 NA 而不是 NaN
+wm <- function(x, w) {            # return NA rather than NaN when all values are missing
   ok <- !is.na(x)
   if (!any(ok)) return(NA_real_)
   weighted.mean(x[ok], w[ok], na.rm = TRUE)
@@ -115,7 +115,7 @@ cwm <- sp_base %>%
     .groups = "drop"
   )
 
-## ---------------------------------------------------------------- 5. 合并协变量
+## ---------------------------------------------------------------- 5. Merge covariates
 ana <- panel %>%
   left_join(normals, by = c("originSiteID" = "destSiteID")) %>%
   rename(orig_temp = temp_normal, orig_prec = prec_normal) %>%
@@ -142,13 +142,13 @@ X_names <- c("orig_temp", "orig_prec", "d_temp_y", "d_prec_y", "d_elev",
 ana <- ana %>% group_by(destSiteID) %>%
   mutate(W_hat_site = pmin(pmax(mean(W_bin), 0.1), 0.9)) %>% ungroup()
 
-cat("\n### 面板规模 ###\n")
+cat("\n### Panel size ###\n")
 cat("panel turf-years:", nrow(panel), "| turfs:", n_distinct(panel$turf_key),
     "| regions:", n_distinct(panel$Region), "| dest sites:", n_distinct(panel$destSiteID), "\n")
-cat("\n### 各协变量 NA（n =", nrow(ana), "）###\n")
+cat("\n### Missing values by covariate(n =", nrow(ana), ")###\n")
 for (v in X_names) cat(sprintf("%-12s NA=%d\n", v, sum(is.na(ana[[v]]))))
 
-## ---------------------------------------------------------------- 6. 因果森林
+## ---------------------------------------------------------------- 6. Causal forest
 run_cf <- function(Yname, label) {
   d2 <- ana %>% drop_na(all_of(c(Yname, X_names, "turf_key")))
   Xm <- as.matrix(d2[, X_names]); X <- scale(Xm)
@@ -167,10 +167,10 @@ run_cf <- function(Yname, label) {
   list(cf = cf, d2 = d2, ate = ate, label = label)
 }
 
-res_rich <- run_cf("Y_rich", "v3 结果 1：物种丰富度变化（全样本）")
-res_lrr  <- run_cf("Y_lrr",  "v3 结果 2：总盖度 LRR（全样本）")
+res_rich <- run_cf("Y_rich", "v3 outcome 1: richness change (full sample)")
+res_lrr  <- run_cf("Y_lrr",  "v3 outcome 2: total cover LRR (full sample)")
 
-## ---------------------------------------------------------------- 7. 图
+## ---------------------------------------------------------------- 7. Figure
 theme_set(theme_minimal(base_size = 12))
 plot_dir <- "project/output"
 
@@ -222,7 +222,7 @@ p3 <- bind_rows(blp_tbl(res_rich, "Richness change"), blp_tbl(res_lrr, "Cover LR
        title = "Best linear projection of CATE (full sample)")
 ggsave(file.path(plot_dir, "fig3_blp_v3.png"), p3, width = 9, height = 4.5, dpi = 200)
 
-## ---------------------------------------------------------------- 8. 安慰剂 + 连续剂量
+## ---------------------------------------------------------------- 8. Placebo and continuous dose
 placebo_ate <- replicate(200, {
   d2 <- res_rich$d2
   wp <- ave(d2$W_bin, d2$destSiteID, FUN = function(z) sample(z))
@@ -232,7 +232,7 @@ placebo_ate <- replicate(200, {
                         num.trees = 1000, min.node.size = 5)
   average_treatment_effect(cf_p)[1]
 })
-cat("\n== 安慰剂（站点内置换 200 次）==\n")
+cat("\n== Placebo (200 within-site permutations)==\n")
 cat(sprintf("placebo mean=%.4f sd=%.4f | real ATE=%.4f | p=(1+#{>=real})/201=%.4f\n",
             mean(placebo_ate), sd(placebo_ate), res_rich$ate[1],
             (1 + sum(placebo_ate >= res_rich$ate[1])) / (length(placebo_ate) + 1)))
@@ -242,12 +242,12 @@ Xc <- scale(as.matrix(d2c[, X_names])); Xc[is.na(Xc)] <- 0
 cf_c <- causal_forest(Xc, d2c$Y_rich, d2c$W_cont, W.hat = d2c$W_hat_site,
                       clusters = as.numeric(factor(d2c$turf_key)), num.trees = 4000)
 ate_c <- average_treatment_effect(cf_c)
-cat("\n== 连续剂量（每 +1C 移栽温差）==\n")
+cat("\n== Continuous dose (per +1 C transplantation temperature difference)==\n")
 cat(sprintf("n=%d ATE per C=%.4f SE=%.4f\n", nrow(d2c), ate_c[1], ate_c[2]))
 
-## ---------------------------------------------------------------- 9. 描述统计 + 保存
+## ---------------------------------------------------------------- 9. Descriptive statistics + Save outputs
 d2r <- res_rich$d2
-cat("\n### 样本描述 ###\n")
+cat("\n### Sample description ###\n")
 cat("turfs:", n_distinct(d2r$turf_key), "| regions:", n_distinct(d2r$Region),
     "| dest sites:", n_distinct(d2r$destSiteID),
     "| years:", min(d2r$Year), "-", max(d2r$Year), "\n")
@@ -266,4 +266,4 @@ write.csv(d2r %>% mutate(CATE_rich = cate_r,
           file.path(plot_dir, "turf_year_cate_v3.csv"), row.names = FALSE)
 saveRDS(list(rich = res_rich, lrr = res_lrr, cont = cf_c, placebo = placebo_ate),
         file.path(plot_dir, "cf_results_v3.rds"))
-cat("\n== v3 完成 ==\n")
+cat("\n== v3 complete ==\n")

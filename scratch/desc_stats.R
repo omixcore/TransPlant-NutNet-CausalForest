@@ -1,10 +1,10 @@
-# 手稿用描述性统计
+# Descriptive statistics for the manuscript
 .libPaths(c("project/rlibs", .libPaths()))
 suppressPackageStartupMessages({library(dplyr); library(tidyr)})
 res <- readRDS("project/output/cf_results_v2.rds")
 d2  <- res$rich$d2
 
-cat("== 分析样本描述 ==\n")
+cat("== Analysis sample description ==\n")
 cat("n turf-years:", nrow(d2), "| turfs:", length(unique(d2$turfID)),
     "| dest sites:", length(unique(d2$destSiteID)),
     "| origin sites:", length(unique(d2$originSiteID)),
@@ -30,13 +30,13 @@ cat(sprintf("CATE rich: mean %.2f, sd %.2f, range %.2f to %.2f\n",
 cat(sprintf("frac CATE<0: %.1f%%\n", 100*mean(d2$CATE_rich<0)))
 cat(sprintf("Y_rich mean %.2f | Y_lrr mean %.3f\n", mean(d2$Y_rich), mean(d2$Y_lrr)))
 
-# 每个站点 n
-cat("\n== 站点样本量 ==\n")
+# Observations per site
+cat("\n== Site sample size ==\n")
 print(d2 %>% count(destSiteID, Region) %>% arrange(desc(n)) %>% as.data.frame())
 
-# 物种池
+# Species pool
 e <- new.env(); load("project/data/TransPlantNetwork.RData", envir=e)
-cat("\n原始物种数:", length(unique(e$dat$SpeciesName)), "| 记录数:", nrow(e$dat), "\n")
+cat("\nSource species count:", length(unique(e$dat$SpeciesName)), "| record count:", nrow(e$dat), "\n")
 
 # NutNet
 nn <- read.csv("project/output/nutnet_plot_cate.csv")

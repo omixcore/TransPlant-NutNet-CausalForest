@@ -62,7 +62,7 @@ siteT <- gs %>%
   group_by(destSiteID) %>%
   summarise(T_gs = mean(value, na.rm = TRUE), .groups = "drop")
 
-cat("### 站点生长季温度 ###\n")
+cat("### Site growing-season temperature ###\n")
 cat("sites with T_gs:", sum(!is.na(siteT$T_gs)), "| range:",
     round(min(siteT$T_gs, na.rm = TRUE), 2), "-", round(max(siteT$T_gs, na.rm = TRUE), 2), "deg C\n")
 
@@ -92,7 +92,7 @@ sp_turf <- dat %>% filter(present) %>%
          STP   = ifelse(n_use >= 2, sumT_use / n_use, NA_real_)) %>%
   dplyr::select(turf_key, SpeciesName, STP, n_site)
 
-cat("\n### STP 可得性（leave-one-site-out, n_use >= 2）###\n")
+cat("\n### STP availability(leave-one-site-out, n_use >= 2)###\n")
 cat("species total:", n_distinct(dat$SpeciesName),
     "| with STP:", n_distinct(sp_turf$SpeciesName[!is.na(sp_turf$STP)]),
     sprintf("(%.1f%%)\n", 100 * n_distinct(sp_turf$SpeciesName[!is.na(sp_turf$STP)]) / n_distinct(dat$SpeciesName)))
@@ -121,11 +121,11 @@ cti_panel <- dat %>% filter(present) %>%
          ys        = Year - base_year) %>%
   ungroup()
 
-cat("\n### CTI 覆盖率 ###\n")
+cat("\n### CTI coverage ###\n")
 cat("turf-years:", nrow(cti_panel),
-    "| 盖度加权覆盖率 中位:", round(median(cti_panel$cov_frac, na.rm = TRUE), 3),
-    "| 均值:", round(mean(cti_panel$cov_frac, na.rm = TRUE), 3), "\n")
-cat("物种数覆盖率 中位:", round(median(cti_panel$n_sp_stp / cti_panel$n_sp, na.rm = TRUE), 3), "\n")
+    "| median cover-weighted coverage:", round(median(cti_panel$cov_frac, na.rm = TRUE), 3),
+    "| mean:", round(mean(cti_panel$cov_frac, na.rm = TRUE), 3), "\n")
+cat("median species-count coverage:", round(median(cti_panel$n_sp_stp / cti_panel$n_sp, na.rm = TRUE), 3), "\n")
 
 ## ---------------------------------------------------------------- 5. thermal directionality of turnover
 sets <- dat %>% filter(present) %>% distinct(turf_key, Year, SpeciesName)
@@ -164,7 +164,7 @@ dir_tbl <- gain_df %>%
   full_join(loss_df, by = c("turf_key", "Year")) %>%
   mutate(d_stp = ifelse(n_gain_stp >= 1 & n_loss_stp >= 1, stp_gain - stp_loss, NA_real_))
 
-cat("\n### 定向更替指标 ###\n")
+cat("\n### Directional turnover metrics ###\n")
 cat("turf-years with d_stp defined:", sum(!is.na(dir_tbl$d_stp)),
     "| mean d_stp:", round(mean(dir_tbl$d_stp, na.rm = TRUE), 3), "\n")
 
@@ -227,11 +227,11 @@ ana <- d2 %>%
 ana <- ana %>%
   mutate(d_cti_ok = ifelse(cov_frac >= 0.5 & n_sp_stp >= 3, d_cti, NA_real_))
 
-cat("\n### 合并后 ###\n")
+cat("\n### After merging ###\n")
 cat("rows:", nrow(ana),
-    "| d_cti 非缺失:", sum(!is.na(ana$d_cti)),
-    "| d_cti_ok 非缺失:", sum(!is.na(ana$d_cti_ok)),
-    "| d_stp 非缺失:", sum(!is.na(ana$d_stp)), "\n")
+    "| d_cti nonmissing:", sum(!is.na(ana$d_cti)),
+    "| d_cti_ok nonmissing:", sum(!is.na(ana$d_cti_ok)),
+    "| d_stp nonmissing:", sum(!is.na(ana$d_stp)), "\n")
 
 ## ---------------------------------------------------------------- 8. causal forest
 X_names <- c("orig_temp", "orig_prec", "d_temp_y", "d_prec_y", "d_elev",
@@ -277,7 +277,7 @@ write.csv(ate_tbl, file.path(out, "cti_ate.csv"), row.names = FALSE)
 ## how much of the imposed warming does community composition actually track?
 dose <- mean(ana$W_cont[ana$W_bin == 1], na.rm = TRUE)
 trk  <- 100 * r_cti$ate[1] / dose
-cat(sprintf("\n### 气候追踪比例 ###\n施加的平均增温 = %.2f deg C | dCTI = %.3f deg C | 追踪 = %.1f%% of imposed warming\n",
+cat(sprintf("\n### Climate tracking fraction ###\nMean imposed warming = %.2f deg C | dCTI = %.3f deg C | tracking = %.1f%% of imposed warming\n",
             dose, r_cti$ate[1], trk))
 write.csv(data.frame(dose_degC = dose, dCTI_degC = r_cti$ate[1], tracking_pct = trk),
           file.path(out, "cti_tracking.csv"), row.names = FALSE)

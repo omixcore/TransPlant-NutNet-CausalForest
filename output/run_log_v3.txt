@@ -1,14 +1,14 @@
 During startup - Warning messages:
-1: Setting LC_COLLATE=C.UTF-8 failed 
-2: Setting LC_CTYPE=C.UTF-8 failed 
-3: Setting LC_MONETARY=C.UTF-8 failed 
-4: Setting LC_TIME=C.UTF-8 failed 
-物种名匹配率：修复前 67.0% → 修复后 88.5%
+1: Setting LC_COLLATE=C.UTF-8 failed
+2: Setting LC_CTYPE=C.UTF-8 failed
+3: Setting LC_MONETARY=C.UTF-8 failed
+4: Setting LC_TIME=C.UTF-8 failed
+Taxon match rate: before 67.0% → after 88.5%
 
-### 面板规模 ###
-panel turf-years: 1198 | turfs: 231 | regions: 22 | dest sites: 43 
+### Panel size ###
+panel turf-years: 1198 | turfs: 231 | regions: 22 | dest sites: 43
 
-### 各协变量 NA（n = 1198 ）###
+### Missing values by covariate(n = 1198 )###
 orig_temp    NA=0
 orig_prec    NA=0
 d_temp_y     NA=0
@@ -21,24 +21,24 @@ cwm_Npc      NA=27
 prop_woody   NA=27
 Year         NA=0
 
-==== v3 结果 1：物种丰富度变化（全样本） ====
+==== v3 outcome 1: richness change (full sample) ====
 n=1171 clusters=225 ATE=0.6457 SE=0.5305 95%CI=[-0.3942, 1.6855]
 best linear projection:
 
 Best linear projection of the conditional average treatment effect.
 Confidence intervals are cluster- and heteroskedasticity-robust (HC3):
 
-            Estimate Std. Error t value Pr(>|t|)  
-(Intercept)  0.64566    0.53138  1.2151  0.22459  
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)  0.64566    0.53138  1.2151  0.22459
 orig_temp   -1.36058    0.77582 -1.7537  0.07974 .
-orig_prec   -1.98955    1.23493 -1.6111  0.10744  
-d_temp_y     0.40898    0.83657  0.4889  0.62502  
-d_prec_y    -1.29915    1.19841 -1.0841  0.27856  
-d_elev       0.69746    0.73983  0.9427  0.34602  
+orig_prec   -1.98955    1.23493 -1.6111  0.10744
+d_temp_y     0.40898    0.83657  0.4889  0.62502
+d_prec_y    -1.29915    1.19841 -1.0841  0.27856
+d_elev       0.69746    0.73983  0.9427  0.34602
 base_rich   -1.74409    0.89463 -1.9495  0.05148 .
-cwm_Hgt      1.73643    1.23498  1.4060  0.15998  
-cwm_Npc     -0.50739    0.83832 -0.6052  0.54513  
-prop_woody  -0.27151    0.56867 -0.4774  0.63314  
+cwm_Hgt      1.73643    1.23498  1.4060  0.15998
+cwm_Npc     -0.50739    0.83832 -0.6052  0.54513
+prop_woody  -0.27151    0.56867 -0.4774  0.63314
 Year         0.60941    0.35435  1.7198  0.08573 .
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -54,7 +54,7 @@ mean.forest.prediction          1.03288    0.96716  1.0679 0.1429
 differential.forest.prediction -0.18038    0.86864 -0.2077 0.5822
 
 
-==== v3 结果 2：总盖度 LRR（全样本） ====
+==== v3 outcome 2: total cover LRR (full sample) ====
 n=1171 clusters=225 ATE=-0.0174 SE=0.0433 95%CI=[-0.1022, 0.0674]
 best linear projection:
 
@@ -86,20 +86,20 @@ differential.forest.prediction -0.80305    1.39528 -0.5755 0.7175
 
 Warning message:
 `geom_errorbarh()` was deprecated in ggplot2 4.0.0.
-i Please use the `orientation` argument of `geom_errorbar()` instead. 
+i Please use the `orientation` argument of `geom_errorbar()` instead.
 `height` was translated to `width`.
 
-== 安慰剂（站点内置换 200 次）==
+== Placebo (200 within-site permutations)==
 placebo mean=0.1072 sd=0.3332 | real ATE=0.6457 | p=(1+#{>=real})/201=0.0647
 
-== 连续剂量（每 +1C 移栽温差）==
+== Continuous dose (per +1 C transplantation temperature difference)==
 n=1171 ATE per C=0.1301 SE=0.3570
 
-### 样本描述 ###
-turfs: 225 | regions: 20 | dest sites: 41 | years: 2007 - 2022 
-warm: 512 | control: 659 
+### Sample description ###
+turfs: 225 | regions: 20 | dest sites: 41 | years: 2007 - 2022
+warm: 512 | control: 659
 warming median 0.00 C, range -1.85-11.30
 orig_temp 3.1-15.9 C | base_rich 6-74 (mean 22.8)
 CATE rich mean 0.64 sd 0.91 range -2.52 to 3.41 | frac<0 21.4%
 
-== v3 完成 ==
+== v3 complete ==

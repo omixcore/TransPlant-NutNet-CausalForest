@@ -9,8 +9,8 @@ for (v in c("d_cti_ok","d_stp","d_cwm_SLA","d_cwm_Hgt","d_cwm_Npc","d_cwm_woody"
       suppressWarnings(min(x, na.rm=TRUE)), suppressWarnings(max(x, na.rm=TRUE)),
       sd(x, na.rm=TRUE)))
 }
-cat("\n--- d_cwm_SLA 分位 ---\n"); print(quantile(a$d_cwm_SLA, c(0,.01,.25,.5,.75,.99,1), na.rm=TRUE))
-cat("\nd_cwm_SLA 中 Inf 数:", sum(is.infinite(a$d_cwm_SLA)), "\n")
-cat("d_cwm_Npc 分位:\n"); print(quantile(a$d_cwm_Npc, c(0,.01,.5,.99,1), na.rm=TRUE))
-cat("\nd_cti 描述: mean", round(mean(a$d_cti,na.rm=TRUE),4), " sd", round(sd(a$d_cti,na.rm=TRUE),4), "\n")
-cat("d_cti_ok 描述: mean", round(mean(a$d_cti_ok,na.rm=TRUE),4), "\n")
+cat("\n--- d_cwm_SLA quantiles ---\n"); print(quantile(a$d_cwm_SLA, c(0,.01,.25,.5,.75,.99,1), na.rm=TRUE))
+cat("\nInfinite d_cwm_SLA values:", sum(is.infinite(a$d_cwm_SLA)), "\n")
+cat("d_cwm_Npc quantiles:\n"); print(quantile(a$d_cwm_Npc, c(0,.01,.5,.99,1), na.rm=TRUE))
+cat("\nd_cti summary: mean", round(mean(a$d_cti,na.rm=TRUE),4), " sd", round(sd(a$d_cti,na.rm=TRUE),4), "\n")
+cat("d_cti_ok summary: mean", round(mean(a$d_cti_ok,na.rm=TRUE),4), "\n")

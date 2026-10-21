@@ -1,17 +1,17 @@
 During startup - Warning messages:
-1: Setting LC_COLLATE=C.UTF-8 failed 
-2: Setting LC_CTYPE=C.UTF-8 failed 
-3: Setting LC_MONETARY=C.UTF-8 failed 
-4: Setting LC_TIME=C.UTF-8 failed 
-### 站点生长季温度 ###
+1: Setting LC_COLLATE=C.UTF-8 failed
+2: Setting LC_CTYPE=C.UTF-8 failed
+3: Setting LC_MONETARY=C.UTF-8 failed
+4: Setting LC_TIME=C.UTF-8 failed
+### Site growing-season temperature ###
 sites with T_gs: 43 | range: 3.13 - 17.47 deg C
 
-### STP 可得性（leave-one-site-out, n_use >= 2）###
+### STP availability(leave-one-site-out, n_use >= 2)###
 species total: 1268 | with STP: 410 (32.3%)
 
-### CTI 覆盖率 ###
-turf-years: 1183 | 盖度加权覆盖率 中位: 0.949 | 均值: 0.837 
-物种数覆盖率 中位: 0.903 
+### CTI coverage ###
+turf-years: 1183 | median cover-weighted coverage: 0.949 | mean: 0.837
+median species-count coverage: 0.903
 Warning message:
 In left_join(., base_sp %>% dplyr::select(turf_key, SpeciesName),  :
   Detected an unexpected many-to-many relationship between `x` and `y`.
@@ -20,11 +20,11 @@ i Row 1 of `y` matches multiple rows in `x`.
 i If a many-to-many relationship is expected, set `relationship =
   "many-to-many"` to silence this warning.
 
-### 定向更替指标 ###
-turf-years with d_stp defined: 858 | mean d_stp: 0.336 
+### Directional turnover metrics ###
+turf-years with d_stp defined: 858 | mean d_stp: 0.336
 
-### 合并后 ###
-rows: 1171 | d_cti 非缺失: 1171 | d_cti_ok 非缺失: 1061 | d_stp 非缺失: 858 
+### After merging ###
+rows: 1171 | d_cti nonmissing: 1171 | d_cti_ok nonmissing: 1061 | d_stp nonmissing: 858
 
 == dCTI (community temperature index shift, deg C) ==
 n=1061 clusters=206 ATE=0.0705 SE=0.0359 95%CI=[0.0001, 0.1409] p=0.0497
@@ -53,8 +53,8 @@ n=1171 clusters=225 ATE=-0.0087 SE=0.0106 95%CI=[-0.0295, 0.0121] p=0.4115
 5 dCWM_Npc expl~  1171 -0.598   0.287  -1.16e+0 -0.0353 0.0373      0.0186 0.139
 6 dCWM_wo~ expl~  1171 -0.00871 0.0106 -2.95e-2  0.0121 0.412       0.206  0.412
 
-### 气候追踪比例 ###
-施加的平均增温 = 2.40 deg C | dCTI = 0.070 deg C | 追踪 = 2.9% of imposed warming
+### Climate tracking fraction ###
+Mean imposed warming = 2.40 deg C | dCTI = 0.070 deg C | tracking = 2.9% of imposed warming
 
 ### BLP (dCTI / dSTP) ###
                                            outcome        term       est     se
