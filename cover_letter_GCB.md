@@ -2,7 +2,7 @@
 
 Dear Editors,
 
-We are pleased to submit our manuscript "**Stable richness, shifting composition: causal forests reveal rapid but climatically lagged turnover under experimental warming**" for consideration as an Original Research article in *Global Change Biology*.
+We are pleased to submit our manuscript "**Downslope transplantation increases plant community turnover while mean richness remains uncertain**" for consideration as an Original Research article in *Global Change Biology*.
 
 Mountain plant communities are widely reported to be reorganising under climate change, yet the evidence is dominated by resurvey and observational studies in which climate tracking cannot be separated from land-use change, nitrogen deposition and recording artefacts. Transplant experiments were designed to break exactly this confounding — treatment is assigned by the experimenter, and paired in-situ controls share site, substrate, history and observer — but their results are typically reported as a single average richness response, which conflates transient transplant shock with persistent warming effects and conceals the compositional processes beneath a near-zero net number.
 
