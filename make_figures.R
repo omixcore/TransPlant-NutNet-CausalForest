@@ -4,14 +4,15 @@
 # Fig 4 Regional effect reversals | Fig 5 Time since transplantation | Fig 6 NutNet positive control
 # Prerequisite: run analysis_causal_forest_v3.R / analysis_event_time.R / analysis_nutnet.R
 # =====================================================================
-.libPaths(c("project/rlibs", .libPaths()))
+root <- if (dir.exists("project/output")) "project" else "."
+if (dir.exists(file.path(root, "rlibs"))) .libPaths(c(file.path(root, "rlibs"), .libPaths()))
 suppressPackageStartupMessages({
   library(grf); library(dplyr); library(tidyr); library(ggplot2)
   library(patchwork); library(maps)
 })
 
 set.seed(20261021)
-out <- "project/output"
+out <- file.path(root, "output")
 res <- readRDS(file.path(out, "cf_results_v3.rds"))
 rich <- res$rich; lrr <- res$lrr
 d2 <- rich$d2
@@ -51,7 +52,7 @@ W2 <- 6.7   # single-column/full-page width (inches)
 
 ## ===================== Fig 1: Study system and design =====================
 ## (a) Site map
-e <- new.env(); load("project/data/TransPlantNetwork.RData", envir = e)
+e <- new.env(); load(file.path(root, "data", "TransPlantNetwork.RData"), envir = e)
 cl <- as.data.frame(e$climdata)
 site_xy <- cl %>% group_by(Region = gradient, destSiteID) %>%
   summarise(lat = mean(lat, na.rm = TRUE), lon = mean(lon, na.rm = TRUE), .groups = "drop") %>%
@@ -74,10 +75,11 @@ p1a <- ggplot() +
   scale_fill_gradient2(low = NEG, mid = "grey96", high = POS, midpoint = 0,
                        name = "Mean CATE\n(species)") +
   scale_size_area(max_size = 6, name = "Turf-years", breaks = c(50, 150, 250)) +
-  coord_quickmap(xlim = c(-130, 40), ylim = c(24, 74)) +
+  coord_quickmap(xlim = c(-125, 120), ylim = c(24, 74)) +
   labs(title = "(a) TransPlant network",
        subtitle = sprintf("%d regions, %d countries, %d turf-years", nrow(reg_xy),
-                          length(unique(sub("_.*", "", reg_xy$Region))), nrow(d2))) +
+                          length(unique(sub("_.*", "", reg_xy$Region))), nrow(d2)),
+       caption = "Map lines delineate study areas and do not necessarily depict accepted national boundaries") +
   theme(axis.line = element_blank(), axis.ticks = element_blank(),
         axis.title = element_blank(), panel.grid = element_blank(),
         legend.position = "right", legend.box = "vertical")
@@ -148,10 +150,9 @@ bin_cate <- function(xv, lab, ttl, colour = POS) {
   tb <- d2 %>% transmute(x = .data[[xv]], y = CATE_rich) %>%
     mutate(bin = ntile(x, 7)) %>%
     group_by(bin) %>%
-    summarise(x = mean(x), m = mean(y), se = sd(y) / sqrt(n()), n = n(), .groups = "drop")
+    summarise(x = mean(x), m = mean(y), n = n(), .groups = "drop")
   ggplot(tb, aes(x, m)) +
     geom_hline(yintercept = 0, linetype = 2, colour = GREY, linewidth = 0.45) +
-    geom_errorbar(aes(ymin = m - 1.96 * se, ymax = m + 1.96 * se), width = 0, colour = colour, linewidth = 0.5) +
     geom_line(colour = colour, linewidth = 0.45) +
     geom_point(aes(size = n), colour = colour) +
     scale_size_area(max_size = 3.6, guide = "none") +
@@ -160,31 +161,23 @@ bin_cate <- function(xv, lab, ttl, colour = POS) {
 p3a <- bin_cate("orig_temp", "Source temperature (deg C)", "(a) Source climate")
 p3b <- bin_cate("base_rich", "Baseline species richness", "(b) Baseline diversity")
 
-## (c) Two-dimensional response surface:source temperature x baseline richness
+## (c) Observed covariate support only: binned predictions
 Xm <- as.matrix(d2[, X_names])
 mu <- colMeans(Xm, na.rm = TRUE)
 sdv <- apply(Xm, 2, sd, na.rm = TRUE); sdv[sdv == 0] <- 1
-grid <- expand.grid(
-  orig_temp = seq(quantile(d2$orig_temp, .02), quantile(d2$orig_temp, .98), length.out = 40),
-  base_rich = seq(quantile(d2$base_rich, .02), quantile(d2$base_rich, .98), length.out = 40)
-)
-med <- apply(Xm, 2, median, na.rm = TRUE)
-Xg <- matrix(rep(med, each = nrow(grid)), nrow = nrow(grid))
-colnames(Xg) <- X_names
-Xg[, "orig_temp"] <- grid$orig_temp
-Xg[, "base_rich"] <- grid$base_rich
-Xg <- sweep(sweep(Xg, 2, mu, "-"), 2, sdv, "/")
-Xg[is.na(Xg)] <- 0
-grid$CATE <- predict(rich$cf, Xg)$predictions
-
-p3c <- ggplot(grid, aes(orig_temp, base_rich, fill = CATE)) +
-  geom_raster() +
-  geom_contour(aes(z = CATE), breaks = 0, colour = "grey15", linewidth = 0.5) +
+grid <- d2 %>% mutate(temp_bin = ntile(orig_temp, 12), rich_bin = ntile(base_rich, 12)) %>%
+  group_by(temp_bin, rich_bin) %>%
+  summarise(orig_temp = mean(orig_temp), base_rich = mean(base_rich),
+            CATE = mean(CATE_rich), n = n(), .groups = "drop") %>%
+  filter(n >= 4)
+p3c <- ggplot(grid, aes(orig_temp, base_rich, fill = CATE, size = n)) +
+  geom_point(shape = 21, colour = "grey35") +
   scale_fill_gradient2(low = NEG, mid = "grey96", high = POS, midpoint = 0,
                        name = "CATE\n(species)") +
+  scale_size_area(max_size = 5, name = "Turf-years") +
   labs(x = "Source temperature (deg C)", y = "Baseline species richness",
-       title = "(c) Response surface",
-       subtitle = "contour = zero effect; other covariates at median")
+       title = "(c) Observed covariate cells",
+       subtitle = "Mean predicted CATE; cells with n >= 4")
 p3 <- p3a + p3b + p3c + plot_layout(widths = c(1, 1, 1.15))
 save_both(p3, "fig3_who_benefits", W2, 2.6)
 
@@ -211,19 +204,18 @@ p4 <- ggplot(reg, aes(ate, reorder(sub("_", " ", Region), ate))) +
   scale_colour_manual(values = c(`TRUE` = POS, `FALSE` = NEG), guide = "none") +
   scale_size_area(max_size = 4, name = "Turfs", breaks = c(10, 25, 50)) +
   labs(x = "Region-specific ATE (species richness)", y = NULL,
-       title = "Effects reverse sign among regions",
+       title = "Regional point estimates vary",
        subtitle = "Forests re-fitted within region; bars = 95% CI")
 save_both(p4, "fig4_region_ate", 4.6, 3.0)
 
 ## ===================== Fig 5: Time since transplantation =====================
 d2 <- d2 %>% mutate(ys = Year - base_year)
 
-ev <- d2 %>% group_by(ys) %>%
-  summarise(m = mean(CATE_rich), se = sd(CATE_rich) / sqrt(n()), n = n(), .groups = "drop") %>%
+ev <- d2 %>% filter(ys >= 1) %>% group_by(ys) %>%
+  summarise(m = mean(CATE_rich), n = n(), .groups = "drop") %>%
   filter(n >= 20)
 p5a <- ggplot(ev, aes(ys, m)) +
   geom_hline(yintercept = 0, linetype = 2, colour = GREY, linewidth = 0.45) +
-  geom_ribbon(aes(ymin = m - 1.96 * se, ymax = m + 1.96 * se), fill = POS, alpha = .16) +
   geom_line(colour = POS, linewidth = 0.7) +
   geom_point(colour = POS, size = 1.8) +
   labs(x = "Years since transplant", y = "Estimated CATE (richness)",
@@ -262,9 +254,18 @@ save_both(p5, "fig5_event_time", W2, 2.6)
 ## ===================== Fig 6: NutNet positive control =====================
 nn <- read.csv(file.path(out, "nutnet_plot_cate.csv"))
 ctrl <- nn %>% filter(trt == "Ctrl")
+nutnet_log <- readLines(file.path(out, "run_log_nutnet.txt"), warn = FALSE)
+n_line <- grep("^n=[0-9]+ sites=[0-9]+ treated=[0-9]+", nutnet_log, value = TRUE)
+n_val <- as.integer(regmatches(n_line, gregexpr("[0-9]+", n_line))[[1]])
+stopifnot(length(n_val) == 3, n_val[1] == sum(nn$trt %in% c("Ctrl", "N", "NP")))
+n_ate <- grep("^ATE = ", nutnet_log, value = TRUE)
+p_ate <- grep("^P-only ATE = ", nutnet_log, value = TRUE)
+stopifnot(length(n_ate) == 1, length(p_ate) == 1)
+n_est <- as.numeric(regmatches(n_ate, gregexpr("[0-9]+\\.[0-9]+", n_ate))[[1]][1:2])
+p_est <- as.numeric(regmatches(p_ate, gregexpr("[0-9]+\\.[0-9]+", p_ate))[[1]][1:2])
 res_n <- bind_rows(
-  tibble(term = "N or NP added", est = 124.4, se = 24.6),
-  tibble(term = "P added",       est = 65.5,  se = 25.6)
+  tibble(term = "N or NP added", est = n_est[1], se = n_est[2]),
+  tibble(term = "P added", est = p_est[1], se = p_est[2])
 ) %>% mutate(lo = est - 1.96 * se, hi = est + 1.96 * se,
              term = factor(term, levels = c("P added", "N or NP added")))
 
@@ -272,15 +273,15 @@ p6a <- ggplot(res_n, aes(est, term)) +
   geom_vline(xintercept = 0, linetype = 2, colour = GREY, linewidth = 0.45) +
   geom_errorbar(aes(xmin = lo, xmax = hi), orientation = "y", width = 0, colour = "grey40", linewidth = 0.55) +
   geom_point(size = 2.6, colour = "#3D6E4E") +
-  labs(x = "ATE on ANPP (g g/m2)", y = NULL, title = "(a) Fertilization effects",
-       subtitle = "9 sites, 90 fertilized vs 30 control plots")
+  labs(x = "ATE on ANPP (g m^-2)", y = NULL, title = "(a) Fertilization effects",
+       subtitle = sprintf("%d sites; N/NP: %d treated, %d controls", n_val[2], n_val[3], n_val[1]-n_val[3]))
 
 ## Site-level CATE (N/NP)
 site_c <- nn %>% filter(trt != "Ctrl") %>%
   group_by(site) %>% summarise(cate = mean(CATE), n = n(), .groups = "drop")
 p6b <- ggplot(site_c, aes(cate, reorder(site, cate))) +
   geom_vline(xintercept = 0, linetype = 2, colour = GREY, linewidth = 0.45) +
-  geom_vline(xintercept = 124.4, linetype = 3, colour = "#3D6E4E", linewidth = 0.5) +
+  geom_vline(xintercept = n_est[1], linetype = 3, colour = "#3D6E4E", linewidth = 0.5) +
   geom_point(aes(size = n), colour = "#3D6E4E") +
   scale_size_area(max_size = 3.2, guide = "none") +
   labs(x = "Mean plot-level CATE (g/m2)", y = NULL,

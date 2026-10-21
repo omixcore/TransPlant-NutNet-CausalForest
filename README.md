@@ -18,6 +18,17 @@ Public data and generalized random forests for heterogeneous treatment effects o
 
 Additional resources include TRY traits, WorldClim and SoilGrids. Download the source data from the cited repositories into `data/`; large source files are excluded by `.gitignore`.
 
+## Recorded-output figure rebuild
+
+Run `python rebuild_recorded_figures.py` with pandas and matplotlib to regenerate
+Figures 1 and 3–8 (PNG and vector PDF) from the committed CSVs and run logs.
+This route does not refit the causal forests. Figure 8a and 8c show descriptive
+observations; the causal CTI estimates are reported in `output/cti_ate.csv`.
+Figures 4 and 5 use the estimates recorded in `output/run_log_event.txt` and
+update their CSVs, which previously represented different refits.
+The full R analysis requires source archives, package dependencies and the
+untracked data files documented below.
+
 ## Reproduce the analyses
 
 The scripts require R 4.5 or later and the packages used by the individual scripts, including `grf`, `dplyr`, `ggplot2` and `patchwork`. Run them in this order after obtaining the source data:

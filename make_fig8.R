@@ -6,14 +6,15 @@
 #   (d) how much of the imposed warming the community actually tracks
 # Depends on: analysis_cti.R
 # =====================================================================
-.libPaths(c("project/rlibs", .libPaths()))
+root <- if (dir.exists("project/output")) "project" else "."
+if (dir.exists(file.path(root, "rlibs"))) .libPaths(c(file.path(root, "rlibs"), .libPaths()))
 suppressPackageStartupMessages({
-  library(grf); library(dplyr); library(tidyr); library(ggplot2); library(patchwork)
+  library(dplyr); library(tidyr); library(ggplot2); library(patchwork)
 })
 
-out <- "project/output"
-r   <- readRDS(file.path(out, "cti_results.rds"))
-ana <- r$ana
+out <- file.path(root, "output")
+ana <- read.csv(file.path(out, "cti_panel.csv"))
+ate_cti <- read.csv(file.path(out, "cti_ate.csv")) %>% filter(outcome == "dCTI_degC")
 
 POS <- "#2C6E9B"; NEG <- "#B4462F"; WARM <- "#C4622D"; COOL <- "#2C6E9B"; GREY <- "grey35"
 theme_pub <- theme_classic(base_size = 9) +
@@ -40,22 +41,15 @@ save_both <- function(plot, name, w, h) {
   cat("saved", name, "(.png + .pdf)\n")
 }
 
-## ---------------------------------------------------------------- (a) CATE distribution
-dd <- r$cti$d2
-dd$CATE <- predict(r$cti$cf)$predictions
-ate <- r$cti$ate[1]
-
-p8a <- ggplot(tibble(v = dd$CATE), aes(v)) +
+## ---------------------------------------------------------------- (a) Observed change distribution; descriptive only
+dd <- read.csv(file.path(out, "cti_panel.csv"))
+p8a <- ggplot(tibble(v = dd$d_cti_ok), aes(v)) +
   geom_histogram(bins = 38, fill = POS, colour = "white", linewidth = 0.12, alpha = 0.9) +
   geom_vline(xintercept = 0, linetype = 2, colour = GREY, linewidth = 0.45) +
-  geom_vline(xintercept = ate, colour = NEG, linewidth = 0.7) +
-  annotate("text", x = ate, y = Inf, label = sprintf("ATE %+.3f deg C", ate),
-           hjust = -0.08, vjust = 1.8, size = 2.7, colour = NEG) +
-  labs(x = "CATE: change in community temperature index (deg C)",
+  labs(x = "Observed change in community temperature index (deg C)",
        y = "Turf-years",
-       title = "(a) Directional effect on composition",
-       subtitle = sprintf("%d turf-years; %.0f%% of CATEs > 0",
-                          nrow(dd), 100 * mean(dd$CATE > 0)))
+       title = "(a) Observed CTI change (descriptive)",
+       subtitle = sprintf("%d eligible turf-years", sum(!is.na(dd$d_cti_ok))))
 
 ## ---------------------------------------------------------------- (b) event-time
 ph <- read.csv(file.path(out, "cti_phase.csv"))
@@ -68,9 +62,9 @@ p8b <- ggplot(ph, aes(x = phase, y = est)) +
   geom_errorbar(aes(ymin = lo, ymax = hi), width = 0.14, linewidth = 0.5) +
   geom_text(aes(label = sprintf("n=%d", n)), y = -0.045, size = 2.4, colour = "grey35") +
   scale_fill_manual(values = c(sig = NEG, ns = "grey78"), guide = "none") +
-  scale_y_continuous(limits = c(-0.06, 0.23)) +
+  coord_cartesian(ylim = c(-0.09, 0.25)) +
   labs(x = "Years since transplant", y = "dCTI (deg C)",
-       title = "(b) Thermal tracking strengthens with time",
+       title = "(b) Phase-specific CTI estimates",
        subtitle = "ATE by phase, 95% CI; filled = CI excludes zero")
 
 ## ---------------------------------------------------------------- (c) thermal directionality
@@ -86,20 +80,20 @@ p8c <- ggplot(dp, aes(x = grp, y = d_stp, fill = grp)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 1.9,
                fill = "white", colour = "grey10", stroke = 0.4) +
   scale_fill_manual(values = c(LocalControl = COOL, Warm = WARM), guide = "none") +
-  scale_y_continuous(limits = c(-2.6, 2.6)) +
+  coord_cartesian(ylim = c(-2.6, 2.6)) +
   labs(x = NULL, y = "STP of colonisers - STP of extinctions (deg C)",
        title = "(c) Which species replace which",
        subtitle = sprintf("n = %d turf-years; diamond = mean", nrow(dp)))
 
 ## ---------------------------------------------------------------- (d) tracking ratio
 tr <- read.csv(file.path(out, "cti_tracking.csv"))
-lo <- 100 * r$cti$ate[1] / tr$dose_degC - 100 * 1.96 * r$cti$ate[2] / tr$dose_degC
-hi <- 100 * r$cti$ate[1] / tr$dose_degC + 100 * 1.96 * r$cti$ate[2] / tr$dose_degC
+lo <- 100 * ate_cti$lo / tr$dose_degC
+hi <- 100 * ate_cti$hi / tr$dose_degC
 td <- tibble(
   what = factor(c("Imposed\nwarming", "Tracked by\ncomposition"),
                 levels = c("Imposed\nwarming", "Tracked by\ncomposition")),
   pct  = c(100, tr$tracking_pct),
-  lo   = c(NA, max(lo, 0)), hi = c(NA, hi)
+  lo   = c(NA, lo), hi = c(NA, hi)
 )
 
 p8d <- ggplot(td, aes(x = what, y = pct)) +
@@ -107,12 +101,12 @@ p8d <- ggplot(td, aes(x = what, y = pct)) +
   geom_errorbar(aes(ymin = lo, ymax = hi), width = 0.12, linewidth = 0.5, na.rm = TRUE) +
   geom_text(aes(label = ifelse(pct == 100, "100%", sprintf("%.1f%%", pct))),
             vjust = -0.9, size = 3.1, fontface = "bold") +
-  scale_y_continuous(limits = c(0, 115), expand = c(0, 0),
+  scale_y_continuous(limits = c(-5, 115), expand = c(0, 0),
                      breaks = c(0, 25, 50, 75, 100)) +
   labs(x = NULL, y = "Share of the imposed shift (%)",
-       title = "(d) Composition lags far behind the shift",
-       subtitle = sprintf("Tracked / imposed: %.1f%% [%.1f, %.1f]",
-                          tr$tracking_pct, max(lo, 0), hi))
+       title = "(d) CTI shift relative to warming",
+       subtitle = sprintf("%.1f%% [%.2f, %.1f]; CI conditional on fixed mean dose",
+                          tr$tracking_pct, lo, hi))
 
 ## ---------------------------------------------------------------- assemble
 fig8 <- (p8a | p8b) / (p8c | p8d) +

@@ -4,15 +4,16 @@
 ##  (b) Turnover ATE by years since transplant
 ##  (c) Colonisations vs extinctions per turf-year, by treatment
 ## ============================================================================
-.libPaths(c("project/rlibs", .libPaths()))
-suppressPackageStartupMessages({ library(dplyr); library(ggplot2); library(patchwork); library(grf) })
+root <- if (dir.exists("project/output")) "project" else "."
+if (dir.exists(file.path(root, "rlibs"))) .libPaths(c(file.path(root, "rlibs"), .libPaths()))
+suppressPackageStartupMessages({ library(dplyr); library(ggplot2); library(patchwork) })
 
-out <- "project/output"
+out <- file.path(root, "output")
 ate  <- read.csv(file.path(out, "gainloss_ate.csv"))
 ph   <- read.csv(file.path(out, "gainloss_turnover_phase.csv"))
 pan  <- read.csv(file.path(out, "gainloss_panel.csv"))
-res  <- readRDS(file.path(out, "cf_results_v3.rds"))
-a_net <- average_treatment_effect(res$rich$cf)
+net <- read.csv(file.path(out, "joint_ate.csv")) %>% filter(outcome == "net_richness")
+a_net <- c(net$ate, net$se_joint)
 
 d_a <- bind_rows(
   ate %>% mutate(outcome = recode(outcome,
@@ -52,7 +53,7 @@ p_b <- ggplot(ph, aes(phase, est)) +
   geom_errorbar(aes(ymin = lo, ymax = hi), width = 0.12, colour = "#185FA5", linewidth = 0.7) +
   geom_point(size = 3, colour = "#185FA5") +
   geom_line(aes(group = 1), colour = "#185FA5", linewidth = 0.5, alpha = 0.6) +
-  geom_text(aes(label = sprintf("n=%d", n)), vjust = 2.4, size = 3, colour = "grey35") +
+  geom_text(aes(y = lo, label = sprintf("n=%d", n)), vjust = 1.7, size = 3, colour = "grey35") +
   labs(x = "Years since transplant", y = "ATE on total turnover",
        title = "(b) Turnover vs time since transplant",
        subtitle = "Separate forests per phase") +
@@ -72,7 +73,7 @@ p_c <- ggplot(pan, aes(gains, losses, colour = factor(W_bin))) +
        subtitle = "Dashed line: gains = losses (no net change)") +
   theme_bw(base_size = 11) +
   theme(panel.grid.minor = element_blank(),
-        legend.position = c(0.72, 0.14),
+        legend.position = "bottom",
         legend.background = element_rect(fill = "white", colour = NA),
         plot.title = element_text(size = 9.5, face = "bold"),
         plot.subtitle = element_text(size = 8.5, colour = "grey35"))
