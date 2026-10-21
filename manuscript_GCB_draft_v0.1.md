@@ -45,7 +45,7 @@ We frame Q3 as a positive control: the effect of nitrogen addition on above-grou
 
 ### 2.1 Study systems and data
 
-**TransPlant network.** We used the processed community, climate and trait data of the TransPlant network (Alexander et al., 2018; dataset: TransPlant Network, https://doi.org/10.17605/OSF.IO/9874T). At each participating mountain site, intact vegetation turfs were reciprocally transplanted between paired warm (downslope) and cold (upslope) sites; each destination site hosts "Warm" turfs transplanted downslope (treatment) and "LocalControl" turfs maintained in situ (control). Our analysis sample after quality filtering comprised **1,171 turf-year observations from 225 turfs at 41 destination sites in 20 regions across nine countries (China, France, Germany, India, Italy, Norway, Switzerland, Sweden and the USA), 2007–2022**; 512 turf-years were treated (median destination-minus-source growing-season temperature difference +2.04 °C, interquartile range 1.45–3.20 °C; 99.2% of treated turf-years had a positive temperature difference) and 659 were in-situ controls. Species cover was recorded by visual estimation; species names were harmonised to the trait table using the dataset's taxonomic crosswalk, yielding an 88.5% record-level match (67.0% before harmonisation).
+**TransPlant network.** We used the processed community, climate and trait data of the TransPlant network (Alexander et al., 2018; dataset: TransPlant Network, https://doi.org/10.17605/OSF.IO/9874T). At each participating mountain site, intact vegetation turfs were reciprocally transplanted between paired warm (downslope) and cold (upslope) sites; each destination site hosts "Warm" turfs transplanted downslope (treatment) and "LocalControl" turfs maintained in situ (control). Our analysis sample after quality filtering comprised **1,171 turf-year observations from 225 turfs at 41 destination sites in 20 regions across nine countries (China, France, Germany, India, Italy, Norway, Switzerland, Sweden and the USA), 2007–2022** (Fig. 1); 512 turf-years were treated (median destination-minus-source growing-season temperature difference +2.04 °C, interquartile range 1.45–3.20 °C; 99.2% of treated turf-years had a positive temperature difference) and 659 were in-situ controls. Species cover was recorded by visual estimation; species names were harmonised to the trait table using the dataset's taxonomic crosswalk, yielding an 88.5% record-level match (67.0% before harmonisation).
 
 **Nutrient Network replication dataset.** As an independent positive control we used a publicly available Nutrient Network (NutNet)-derived fertilization dataset from the Cedar Creek LTER archive (dataset knb-lter-cdr.692.1, https://doi.org/10.6073/pasta/7f984c2ed9e63754577ee711e6d74a6e; CC-BY), providing 90 plot-level observations across nine sites with factorial nitrogen (N), phosphorus (P) and combined (NP) fertilization treatments, and site-level mean annual temperature (MAT), mean annual precipitation (MAP), potential evapotranspiration (PET), aridity index, nitrogen deposition, elevation, soil pH and soil organic carbon covariates.
 
@@ -79,24 +79,24 @@ For the NutNet-derived dataset we estimated the ATE of N/NP addition on ANPP wit
 
 ### 2.9 Reproducibility
 
-All code, run logs and outputs are available at https://gitee.com/omixcore/TransPlant-NutNet-CausalForest. The full analysis is reproducible end-to-end from the two public data sources with three R scripts.
+All code, run logs and outputs are available at https://gitee.com/omixcore/TransPlant-NutNet-CausalForest. The full analysis — from the two public data sources to every figure — is reproducible end-to-end with four R scripts (`analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_nutnet.R`, `make_figures.R`).
 
 ## 3. Results
 
 ### 3.1 Average effects are small and uncertain
 
-Across 1,171 turf-years, transplant warming increased species richness on average by **+0.65 species (AIPW ATE, SE 0.53, 95% CI −0.39 to +1.69)**. Total cover did not respond (**LRR −0.017, SE 0.043, 95% CI −0.102 to +0.067**). The richness effect is descriptively positive but indistinguishable from zero — precisely the situation in which an average-only analysis would conclude "no detectable effect".
+Across 1,171 turf-years, transplant warming increased species richness on average by **+0.65 species (AIPW ATE, SE 0.53, 95% CI −0.39 to +1.69)**. Total cover did not respond (**LRR −0.017, SE 0.043, 95% CI −0.102 to +0.067**; Fig. 2a, b). The richness effect is descriptively positive but indistinguishable from zero — precisely the situation in which an average-only analysis would conclude "no detectable effect".
 
 ### 3.2 Effects reverse sign across regions and are time-dependent
 
-Region-specific ATEs (forests re-fit within region) ranged from **−3.98 species (SE 3.10) in DE_Susalps to +3.38 (SE 1.17) in NO_Ulvhaugen**, with three of the six sufficiently powered regions showing effects significantly or near-significantly different from zero (Table S1). Pooling years obscured a consistent temporal structure: in year 1 after transplant the ATE was **−1.22 (SE 1.32)**, whereas from year 2 onward it was **+1.03 (SE 0.70, n = 821)** and remained positive through year ≥ 3 (+1.08, SE 0.78). The CATE event-time curve showed the same dip-then-rise shape (Fig. 5). In the OLS check, the treatment × years-since-transplant interaction was positive (+0.28 species yr⁻¹) though imprecise (p = 0.16); restricting to the Norwegian + Gongga subset, the main treatment effect was significant (+0.90, cluster-robust p = 0.024).
+Region-specific ATEs (forests re-fit within region) ranged from **−3.98 species (SE 3.10) in DE_Susalps to +3.38 (SE 1.17) in NO_Ulvhaugen**, with three of the six sufficiently powered regions showing effects significantly or near-significantly different from zero (Fig. 4; Table S1). Pooling years obscured a consistent temporal structure: in year 1 after transplant the ATE was **−1.22 (SE 1.32)**, whereas from year 2 onward it was **+1.03 (SE 0.70, n = 821)** and remained positive through year ≥ 3 (+1.08, SE 0.78). The CATE event-time curve showed the same dip-then-rise shape (Fig. 5a; phase estimates in Fig. 5b). In the OLS check, the treatment × years-since-transplant interaction was positive (+0.28 species yr⁻¹) though imprecise (p = 0.16); restricting to the Norwegian + Gongga subset, the main treatment effect was significant (+0.90, cluster-robust p = 0.024).
 
 ### 3.3 Who wins and who loses: CATE heterogeneity
 
-Forest-predicted CATEs ranged from −2.52 to +3.41 species (SD 0.91); 21.4% of turf-years had a negative predicted effect. The best linear projection attributed the heterogeneity mainly to two pre-treatment variables (Fig. 3, Table 2):
+Forest-predicted CATEs ranged from −2.52 to +3.41 species (SD 0.91); 21.4% of turf-years had a negative predicted effect. The best linear projection attributed the heterogeneity mainly to two pre-treatment variables (Table 2). Binned CATEs fell monotonically from ≈ +1.0 species in turfs with ~10 baseline species to ≈ −0.55 in turfs with > 40 species (Fig. 3b), and the CATE response surface crosses zero along the diversity gradient at all source temperatures (Fig. 3c):
 
 - **Source climate**: communities from colder origins gained more (standardised coefficient −1.36, p = 0.080 for source growing-season temperature; −1.99, p = 0.107 for source precipitation — the direction indicating that warm/wet-origin communities lose or gain least).
-- **Baseline diversity**: species-rich communities gained less (−1.74, p = 0.051). Binned CATEs fell monotonically from ≈ +1.0 species in turfs with ~10 baseline species to ≈ −0.55 in turfs with > 40 species (Fig. 2) — a sign reversal along the diversity gradient.
+- **Baseline diversity**: species-rich communities gained less (−1.74, p = 0.051) — a sign reversal along the diversity gradient.
 - **Time**: the CATE increased with calendar year (+0.61, p = 0.086), consistent with the event-time result.
 
 The global calibration test of CATE heterogeneity (differential forest prediction) was not significant (p = 0.58), so the heterogeneity evidence, while directionally consistent across three independent summaries (BLP, binned CATEs, region estimates), should be considered **suggestive rather than definitive** at current sample sizes.
@@ -107,7 +107,7 @@ Because richness responded (in heterogeneity) while cover did not, the community
 
 ### 3.5 Placebo and positive control
 
-The placebo permutation ATE averaged 0.11 (SD 0.33) versus the real 0.65, giving a one-sided permutation p = 0.065 — the real effect lies in the far tail of the null distribution but does not clear conventional thresholds with 200 permutations. In the NutNet-derived replication, nitrogen addition increased ANPP by **+124.4 g m⁻² (SE 24.6, 95% CI 76.1–172.7)** and phosphorus alone by +65.5 g m⁻² (SE 25.6), matching published magnitudes for the full NutNet (Fay et al., 2015) and confirming that the GRF pipeline recovers well-established strong effects.
+The placebo permutation ATE averaged 0.11 (SD 0.33) versus the real 0.65, giving a one-sided permutation p = 0.065 — the real effect lies in the far tail of the null distribution but does not clear conventional thresholds with 200 permutations (Fig. 2c). In the NutNet-derived replication, nitrogen addition increased ANPP by **+124.4 g m⁻² (SE 24.6, 95% CI 76.1–172.7)** and phosphorus alone by +65.5 g m⁻² (SE 25.6), matching published magnitudes for the full NutNet (Fay et al., 2015) and confirming that the GRF pipeline recovers well-established strong effects (Fig. 6).
 
 ## 4. Discussion
 
@@ -253,15 +253,17 @@ Wolkovich, E.M., Cook, B.I., Allen, J.M., et al. (2012) Warming experiments unde
 
 ## Figure legends
 
-**Fig. 1.** Distribution of estimated CATEs for (a) cover log response ratio and (b) species richness change across 1,171 turf-years. Dashed line: zero effect.
+**Fig. 1. The TransPlant network and experimental design.** (a) Geographic distribution of the 20 analysis regions (point area = turf-years; fill = mean estimated CATE on species richness). (b) Paired design: intact turfs transplanted downslope to the warmer destination site (Warm treatment) vs. turfs kept in situ (LocalControl). (c) Distribution of the realised warming dose among treated turf-years (destination minus source growing-season temperature; median +2.0 °C).
 
-**Fig. 2.** Binned mean CATE (richness change) by (a) source growing-season temperature and (b) baseline species richness. Error bars: ±1.96 SE across turf-years within sextile bins.
+**Fig. 2. Average effects and null calibration.** Distribution of forest-estimated CATEs across 1,171 turf-years for (a) species richness change and (b) cover log response ratio. (c) Placebo distribution of the ATE under 200 within-site treatment permutations; red line = observed ATE.
 
-**Fig. 3.** Best linear projection coefficients of the CATE on standardised covariates for both outcomes.
+**Fig. 3. Which communities gain and lose species.** Binned mean CATE (richness change) by (a) source growing-season temperature and (b) baseline species richness (point area ∝ turf-years; bars ±1.96 SE). (c) CATE response surface over source temperature × baseline richness, with all other covariates held at their median; black contour = zero effect.
 
-**Fig. 4.** NutNet replication: ATE of nitrogen addition on ANPP (+124.4 g m⁻², 95% CI 76–173) and phosphorus alone (+65.5 g m⁻²).
+**Fig. 4. Region-level effect heterogeneity.** ATEs from forests re-fitted within each region (≥ 8 turfs); bars = 95% CI, point area = number of turfs. Effects reverse sign between the warmest source region (DE_Susalps) and the coldest (NO_Ulvhaugen).
 
-**Fig. 5.** Event-time profile: mean estimated CATE (richness change) by years since transplant (bins with n ≥ 20 turf-years).
+**Fig. 5. Time since transplant.** (a) Mean estimated CATE by years since transplant (bins with n ≥ 20 turf-years). (b) Phase-specific ATEs from separate forests (year 1, year 2, year ≥ 3); bars = 95% CI.
+
+**Fig. 6. Positive control: Nutrient Network fertilization.** (a) ATE of N/NP addition (+124.4 g m⁻², 95% CI 76–173) and P addition alone (+65.5 g m⁻²) on ANPP across nine sites. (b) Mean plot-level CATE by site; dotted line = pooled ATE.
 
 ---
 

@@ -44,6 +44,7 @@ source("analysis_nutnet.R")             # 网络 2：NutNet e247 阳性对照
 - `analysis_causal_forest_v3.R` — TransPlant 主管线（全样本：复合键修复版，v2 只剩 5 区域的 bug 已修）
 - `analysis_event_time.R` — 事件时间分析 + 区域亚组
 - `analysis_nutnet.R` — NutNet 管线原型
+- `make_figures.R` — 手稿六张主图（300 dpi，GCB 规格）
 - `manuscript_GCB_draft_v0.1.md` — **投稿手稿初稿**（GCB 格式，含表格/图注/中文摘要）
 - `diagnose_na.R` / `inspect_*.R` — 数据诊断脚本
 - `A角度_原型分析报告.md` — 原型结果报告（v2，已被 v3 部分取代）

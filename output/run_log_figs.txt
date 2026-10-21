@@ -1,0 +1,18 @@
+During startup - Warning messages:
+1: Setting LC_COLLATE=C.UTF-8 failed 
+2: Setting LC_CTYPE=C.UTF-8 failed 
+3: Setting LC_MONETARY=C.UTF-8 failed 
+4: Setting LC_TIME=C.UTF-8 failed 
+Warning message:
+The following aesthetics were dropped during statistical transformation: fill.
+i This can happen when ggplot fails to infer the correct grouping structure in
+  the data.
+i Did you forget to specify a `group` aesthetic or to convert a numerical
+  variable into a factor? 
+== 图件完成 ==
+  fig1_study_system.png        TRUE
+  fig2_average_and_placebo.png TRUE
+  fig3_who_benefits.png        TRUE
+  fig4_region_ate.png          TRUE
+  fig5_event_time.png          TRUE
+  fig6_nutnet.png              TRUE
