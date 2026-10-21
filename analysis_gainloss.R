@@ -6,6 +6,7 @@
 ## ============================================================================
 .libPaths(c("project/rlibs", .libPaths()))
 suppressPackageStartupMessages({ library(dplyr); library(tidyr); library(grf) })
+set.seed(20261021)   # fixed so the joint-inference script reproduces these forests exactly
 
 out <- "project/output"
 dir.create(out, showWarnings = FALSE, recursive = TRUE)

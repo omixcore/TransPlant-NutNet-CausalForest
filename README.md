@@ -28,6 +28,7 @@ source("analysis_causal_forest_v3.R")   # 网络 1：TransPlant 全样本（v3�
 source("analysis_event_time.R")         # 事件时间分析（首年冲击 vs 建立期）
 source("analysis_nutnet.R")             # 网络 2：NutNet e247 阳性对照
 source("analysis_gainloss.R")           # 定殖/灭绝分解（核心结果）
+source("analysis_joint.R")              # 联合推断：四森林影响函数协方差 + 恒等式检验（新增）
 source("analysis_cti.R")                # 组成变化的方向性：CTI/STP/性状位移（新增）
 source("analysis_robustness.R")         # 稳健性包：LOO/聚类/超参数/FDR/overlap
 source("make_figures.R"); source("make_fig7.R"); source("make_fig8.R")   # 八张主图，PNG + 矢量 PDF
@@ -37,7 +38,7 @@ source("make_figures.R"); source("make_fig7.R"); source("make_fig8.R")   # 八�
 
 ## 主结果（v3，详见手稿 v0.2）
 
-- **周转分解（核心）**：增温同时提高定殖 +1.12（p=0.017）与灭绝 +0.91（p=0.003），总周转 **+2.02 种/turf-年（p<0.001）**，第 2 年起 +2.44（p<0.001）→ **组成快速更替而净丰富度不变**
+- **周转分解（核心）**：增温同时提高定殖 +1.18（p=0.011）与灭绝 +0.92（p=0.002），总周转 **+2.08 种/turf-年（p<0.001）**，第 2 年起 +2.38（p<0.001）→ **组成快速更替而净丰富度不变**；联合推断：两通道对称上升（p=0.62）、通量超过净不平衡 +1.44（p=0.021）
 - **方向性（新增，Fig 8）**：群落温度指数 CTI 仅升 +0.071 °C [0.000, 0.141]，而施加增温平均 +2.4 °C → **群落只追踪了 2.9%（CI 0.0–5.9%）**，且第 3 年起才升至 0.11 °C（p=0.030）；换入物种比换出物种平均暖 0.16 °C（p=0.070）；叶片氮 −0.60 mg/g（p=0.037）。六个方向性结局 BH 校正后最小 p=0.14，属提示性证据
 - **TransPlant 全样本**（n=1171）：平均效应 +0.65 种 [−0.39, 1.69]（不显著），盖度 LRR −0.02
 - **事件时间**：首年 −1.22 → 第 2 年起 +1.03～+1.08
@@ -50,7 +51,8 @@ source("make_figures.R"); source("make_fig7.R"); source("make_fig8.R")   # 八�
 - `analysis_causal_forest_v3.R` — TransPlant 主管线（全样本：复合键修复版，v2 只剩 5 区域的 bug 已修）
 - `analysis_event_time.R` — 事件时间分析 + 区域亚组
 - `analysis_nutnet.R` — NutNet 管线原型
-- `analysis_gainloss.R` — 定殖/灭绝/周转分解
+- `analysis_gainloss.R` — 定殖/灭绝/周转分解（seed 固定，可复现）
+- `analysis_joint.R` — 四森林联合推断：影响函数聚类协方差、对称性/通量/可加性检验（新增）
 - `analysis_cti.R` — 组成变化的方向性：CTI（群落温度指数）、STP（物种温度偏好，留一站法防循环）、ΔSTP（更替方向性）、CWM 性状位移（新增）
 - `analysis_robustness.R` — 稳健性与报告标准（FDR、LOO、MDE、overlap、sessionInfo）
 - `make_figures.R` / `make_fig7.R` / `make_fig8.R` — 八张主图（PNG 300 dpi + **矢量 PDF**，字体嵌入）

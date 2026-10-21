@@ -154,6 +154,18 @@ p<sub>BH</sub> is the Benjamini–Hochberg adjustment within each outcome's 11 m
 
 ---
 
+## Table S10. Joint influence-function inference across the four forests (§2.10, §3.2)
+
+The four forests (net richness, colonisations, extinctions, turnover) are evaluated on the same 1,171 turf-years; their AIPW influence scores (`grf::get_scores`) are therefore row-aligned. Cluster-robust joint covariances (turf level, m = 225 clusters, delta method) test the projection identities. Marginal SEs reproduce the per-forest values to within 0.5% (net: 0.5305 vs 0.5305; colonisations: 0.4676 vs 0.4654; extinctions: 0.3021 vs 0.3007; turnover: 0.5984 vs 0.5995).
+
+| Test | Estimate | Joint SE | z | p | Interpretation |
+|---|---|---|---|---|---|
+| Colonisations − extinctions = 0 | +0.26 | 0.52 | 0.50 | 0.62 | The two fluxes rise symmetrically; warming scales both channels, it does not tilt the balance |
+| Turnover − net = 0 | +1.44 | 0.62 | 2.30 | 0.021 | Total flux exceeds the net imbalance: accelerated turnover with a stable mean |
+| (Colonisations − extinctions) − net = 0 | −0.39 | 0.09 | −4.19 | < 0.001 | Estimator artefact: the identity holds exactly in the data but not across separately regularised forests; component levels are marginal, not additive (see §4.7) |
+
+---
+
 ## Supplementary references
 
 Software: R Core Team (2026) R 4.5.3; Tibshirani, Athey & Wager `grf` 2.6.1. Full session information in `project/output/session_info.txt`.

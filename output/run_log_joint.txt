@@ -1,0 +1,24 @@
+During startup - Warning messages:
+1: Setting LC_COLLATE=C.UTF-8 failed 
+2: Setting LC_CTYPE=C.UTF-8 failed 
+3: Setting LC_MONETARY=C.UTF-8 failed 
+4: Setting LC_TIME=C.UTF-8 failed 
+ATEs: net 0.6457 | gains 1.1828 | losses 0.9232 | turnover 2.0832
+
+### 边际 SE 对比（本脚本 vs 原管线）###
+net:      joint 0.5305 | grf 0.5305
+gains:    joint 0.4676 | grf 0.4654
+losses:   joint 0.3021 | grf 0.3007
+turnover: joint 0.5984 | grf 0.5995
+
+### 恒等式联合检验 ###
+                                                        est     se       z
+additivity: (colonisations - extinctions) - net = 0 -0.3861 0.0921 -4.1941
+flux identity: turnover - net = 0                    1.4375 0.6240  2.3036
+symmetry: colonisations - extinctions = 0            0.2596 0.5236  0.4958
+                                                         p
+additivity: (colonisations - extinctions) - net = 0 0.0000
+flux identity: turnover - net = 0                   0.0212
+symmetry: colonisations - extinctions = 0           0.6201
+
+wrote joint_ate.csv / additivity_test.csv / joint_cov.csv
