@@ -78,6 +78,8 @@ p_c <- ggplot(pan, aes(gains, losses, colour = factor(W_bin))) +
         plot.subtitle = element_text(size = 8.5, colour = "grey35"))
 
 p <- (p_a | p_b) / p_c + plot_layout(heights = c(1, 1.05))
-ggsave(file.path(out, "fig7_turnover.png"), p, width = 170, height = 150,
+ggsave(file.path(out, "fig7_turnover.png"), type = "cairo", p, width = 170, height = 150,
        units = "mm", dpi = 300, bg = "white")
-cat("wrote fig7_turnover.png\n")
+ggsave(file.path(out, "fig7_turnover.pdf"), device = cairo_pdf, p, width = 170, height = 150,
+       units = "mm", bg = "white")
+cat("wrote fig7_turnover.png + .pdf\n")

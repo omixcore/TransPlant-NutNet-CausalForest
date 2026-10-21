@@ -4,6 +4,8 @@
 
 **Note.** All values traceable to run logs in `project/output/` (`run_log_v3.txt`, `run_log_gainloss.txt`, `run_log_robust.txt`, `run_log_event.txt`, `run_log_nutnet.txt`); software: R 4.5.3, grf 2.6.1 (see session_info.txt).
 
+**Figures.** All seven main figures are provided in both raster (300 dpi PNG) and vector (PDF, fonts embedded) formats in `project/output/`: `fig1_study_system`, `fig2_average_and_placebo`, `fig3_who_benefits`, `fig4_region_ate`, `fig5_event_time`, `fig6_nutnet`, `fig7_turnover` (`.pdf` and `.png`). Print width 170 mm for Figs 1–7 (Fig. 4: 117 mm).
+
 ---
 
 ## Table S1. Region-specific ATEs (forests re-fit within region; regions with ≥ 8 turfs)

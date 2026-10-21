@@ -38,6 +38,15 @@ theme_pub <- theme_classic(base_size = 9) +
     plot.margin = margin(4, 6, 4, 4)
   )
 theme_set(theme_pub)
+## ---- 同时导出 PNG（300 dpi）与 PDF（矢量，cairo_pdf）----
+save_both <- function(plot, name, w, h) {
+  ggsave(file.path(out, paste0(name, ".png")), type = "cairo", plot,
+         width = w, height = h, dpi = 300, bg = "white")
+  ggsave(file.path(out, paste0(name, ".pdf")), device = cairo_pdf, plot,
+         width = w, height = h, bg = "white")
+  cat("saved", name, "(.png + .pdf)\n")
+}
+
 W2 <- 6.7   # 单栏/整页宽（inch）
 
 ## ===================== Fig 1: 研究系统与设计 =====================
@@ -107,7 +116,7 @@ p1c <- ggplot(dose, aes(W_cont)) +
        y = "Treated turf-years")
 
 p1 <- p1a / (p1b | p1c) + plot_layout(heights = c(1.55, 1))
-ggsave(file.path(out, "fig1_study_system.png"), type = "cairo", p1, width = W2, height = 5.9, dpi = 300)
+save_both(p1, "fig1_study_system", W2, 5.9)
 
 ## ===================== Fig 2: 平均效应与安慰剂 =====================
 mk_hist <- function(x, fill, xlab, ttl) {
@@ -132,7 +141,7 @@ p2c <- ggplot(tibble(v = pl), aes(v)) +
                           mean(pl), sd(pl), (1 + sum(pl >= rich$ate[1])) / (length(pl) + 1)))
 
 p2 <- p2a + p2b + p2c + plot_layout(widths = c(1, 1, 1))
-ggsave(file.path(out, "fig2_average_and_placebo.png"), type = "cairo", p2, width = W2, height = 2.5, dpi = 300)
+save_both(p2, "fig2_average_and_placebo", W2, 2.5)
 
 ## ===================== Fig 3: 谁获益（异质性） =====================
 bin_cate <- function(xv, lab, ttl, colour = POS) {
@@ -177,7 +186,7 @@ p3c <- ggplot(grid, aes(orig_temp, base_rich, fill = CATE)) +
        title = "(c) Response surface",
        subtitle = "contour = zero effect; other covariates at median")
 p3 <- p3a + p3b + p3c + plot_layout(widths = c(1, 1, 1.15))
-ggsave(file.path(out, "fig3_who_benefits.png"), type = "cairo", p3, width = W2, height = 2.6, dpi = 300)
+save_both(p3, "fig3_who_benefits", W2, 2.6)
 
 ## ===================== Fig 4: 区域间效应翻转 =====================
 run_region <- function(r) {
@@ -204,7 +213,7 @@ p4 <- ggplot(reg, aes(ate, reorder(sub("_", " ", Region), ate))) +
   labs(x = "Region-specific ATE (species richness)", y = NULL,
        title = "Effects reverse sign among regions",
        subtitle = "Forests re-fitted within region; bars = 95% CI")
-ggsave(file.path(out, "fig4_region_ate.png"), type = "cairo", p4, width = 4.6, height = 3.0, dpi = 300)
+save_both(p4, "fig4_region_ate", 4.6, 3.0)
 
 ## ===================== Fig 5: 移栽后时间动态 =====================
 d2 <- d2 %>% mutate(ys = Year - base_year)
@@ -248,7 +257,7 @@ p5b <- ggplot(ph, aes(ate, phase)) +
        title = "(b) Phase-specific ATEs", subtitle = "separate forests per phase")
 
 p5 <- p5a + p5b + plot_layout(widths = c(1.25, 1))
-ggsave(file.path(out, "fig5_event_time.png"), type = "cairo", p5, width = W2, height = 2.6, dpi = 300)
+save_both(p5, "fig5_event_time", W2, 2.6)
 
 ## ===================== Fig 6: NutNet 阳性对照 =====================
 nn <- read.csv(file.path(out, "nutnet_plot_cate.csv"))
@@ -279,7 +288,7 @@ p6b <- ggplot(site_c, aes(cate, reorder(site, cate))) +
        subtitle = "dotted line = pooled ATE")
 
 p6 <- p6a + p6b + plot_layout(widths = c(1, 1))
-ggsave(file.path(out, "fig6_nutnet.png"), type = "cairo", p6, width = W2, height = 2.5, dpi = 300)
+save_both(p6, "fig6_nutnet", W2, 2.5)
 
 cat("== 图件完成 ==\n")
 for (f in c("fig1_study_system.png", "fig2_average_and_placebo.png", "fig3_who_benefits.png",
