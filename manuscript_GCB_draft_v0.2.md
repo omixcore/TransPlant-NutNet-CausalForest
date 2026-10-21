@@ -12,7 +12,7 @@
 
 **Running title:** Turnover after downslope transplantation
 
-**Authors:** Xiaofeng Song¹,†; Pengyu Chen¹,†; Fei Liang²,*
+**Authors:** Fei Liang²,*; Pengyu Chen¹,†; Xiaofeng Song¹,†
 
 ¹ North Henan Medical University, Xinxiang 453003, China.
 
@@ -20,7 +20,7 @@
 
 † These authors contributed equally to this work.
 
-**Author emails:** Xiaofeng Song, songxiaofeng109@163.com; Pengyu Chen, 15803747006@163.com.
+**Author emails:** Pengyu Chen, 15803747006@163.com; Xiaofeng Song, songxiaofeng109@163.com.
 
 **ORCID iDs:** [To be supplied by the authors.]
 
@@ -205,7 +205,7 @@ Analysis scripts and recorded outputs: https://github.com/omixcore/TransPlant-Nu
 
 ## Author contributions
 
-[To be completed: conceived — ; analysis — ; interpretation — ; writing — ]
+Fei Liang: Formal analysis; Visualization; Writing – original draft. Pengyu Chen: Investigation (identification and retrieval of relevant datasets). Xiaofeng Song: Writing – review and editing; Supervision; Funding acquisition.
 
 ## Acknowledgements
 
