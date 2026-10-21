@@ -40,8 +40,8 @@ The turnover decomposition made a stronger ecological story from a small, non-si
 
 | Measure | Estimate and interpretation | Manuscript location |
 |---|---|---|
-| Community temperature index (ΔCTI) | +0.071 °C [0.000, 0.141], p = 0.050; about 2.9% [0.0%, 5.9%] of mean imposed +2.4 °C warming | Sections 2.7, 3.3; Table 5; Fig. 8a,d |
-| Turnover direction (ΔSTP) | Colonising species averaged +0.16 °C warmer in preference than disappearing species, p = 0.070 | Section 3.3; Fig. 8c |
+| Community temperature index (ΔCTI) | +0.071 °C [0.000, 0.141], p = 0.050; about 2.9% [0.0%, 5.9%] of mean imposed +2.4 °C warming | Sections 2.7, 3.3; Table 5; Fig. 8d |
+| Turnover direction (ΔSTP) | Colonising species averaged +0.16 °C warmer in preference than disappearing species, p = 0.070 | Section 3.3; Table 5 (Fig. 8c descriptive) |
 | CTI event time | Near zero in year one; approximately +0.11 °C from year three, p = 0.030 | Section 3.3; Fig. 8b |
 | Trait shifts | Leaf nitrogen −0.60 mg/g, p = 0.037; no clear SLA, height or woody-proportion response | Table 5 |
 | Exploratory moderator | Baseline community-weighted height moderated ΔSTP (−0.26 °C/SD, adjusted p = 0.038); interpret cautiously | Table S8 |

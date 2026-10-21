@@ -103,7 +103,8 @@ def fig4():
     data=data.sort_values('ate')
     fig,ax=plt.subplots(figsize=(7.2,3.5),layout='constrained')
     for y,r in enumerate(data.itertuples(index=False)):
-        ax.errorbar(r.ate,y,xerr=[[r.ate-r.lo],[r.hi-r.ate]],fmt='o',color=BLUE,capsize=3)
+        ax.errorbar(r.ate,y,xerr=[[r.ate-r.lo],[r.hi-r.ate]],fmt='none',color=BLUE,capsize=3)
+        ax.scatter(r.ate,y,s=16+1.7*r.turfs,color=BLUE,zorder=3)
     ax.axvline(0,color=GREY,ls='--');ax.set(yticks=range(len(data)),yticklabels=data.Region,
         xlabel='Region-specific ATE on richness (species)',title='Regional point estimates and 95% intervals')
     save(fig,'fig4_region_ate')
