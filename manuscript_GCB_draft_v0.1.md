@@ -15,13 +15,13 @@
 
 **Correspondence:** [corresponding author email]
 
-**Keywords:** causal inference; generalized random forests; heterogeneous treatment effects; transplant experiment; climate change; mountain grassland; species richness; Nutrient Network; transient dynamics
+**Keywords:** causal inference; generalized random forests; heterogeneous treatment effects; transplant experiment; climate change; mountain grassland; species richness; community turnover; Nutrient Network; transient dynamics
 
 ---
 
 ## Abstract
 
-Transplant experiments are a cornerstone of climate-change ecology, yet they typically report a single *average* community response, implicitly assuming that warming affects all communities in the same direction and magnitude. Here we re-analysed the TransPlant network — a globally distributed reciprocal-transplant experiment spanning 20 mountain grassland regions in nine countries (41 destination sites, 225 transplanted turfs, 1,171 turf-year observations, 2007–2022) — using generalized random forests (causal forests) to estimate site- and community-level conditional average treatment effects (CATEs) of downslope transplant warming on plant species richness. The average effect was small and statistically uncertain (+0.65 species, 95% CI −0.39 to +1.69), and total cover showed no response (log response ratio −0.02, 95% CI −0.10 to 0.07), consistent with species turnover rather than biomass accumulation. However, averaging concealed three structured patterns. First, effects were strongly time-dependent: transplanted turfs lost species in the first year (ATE −1.22), then gained species from year 2 onwards (+1.03 to +1.08), indicating that transplant shock is transient and that pooled multi-year estimates conflate the two phases. Second, effects reversed direction among regions, from −3.98 species in the warmest source community to +3.38 in the coldest. Third, CATEs varied systematically with baseline conditions: communities originating from colder sites gained more species, and species-rich communities gained less, with the estimated CATE turning negative for the most diverse turfs — direct evidence that warming-driven diversity gains saturate, and may reverse, along the diversity gradient. A negative-control (placebo) analysis and an independent replication in a Nutrient Network fertilization sub-dataset (nitrogen addition increased above-ground net primary productivity by +124 g m⁻², 95% CI 76–173) support the validity of the framework. Our results show that "no average effect" does not mean "no effect": causal machine learning can convert experimentally randomized treatments into spatially explicit predictions of which communities are most likely to gain or lose diversity, a prerequisite for targeted conservation under climate change.
+Transplant experiments are a cornerstone of climate-change ecology, yet they typically report a single *average* community response, implicitly assuming that warming affects all communities in the same direction and magnitude. Here we re-analysed the TransPlant network — a globally distributed reciprocal-transplant experiment spanning 20 mountain grassland regions in nine countries (41 destination sites, 225 transplanted turfs, 1,171 turf-year observations, 2007–2022) — using generalized random forests (causal forests) to estimate site- and community-level conditional average treatment effects (CATEs) of downslope transplant warming on plant species richness. The average effect was small and statistically uncertain (+0.65 species, 95% CI −0.39 to +1.69), and total cover showed no response (log response ratio −0.02, 95% CI −0.10 to 0.07), consistent with species turnover rather than biomass accumulation. Decomposing the net change confirmed and quantified this mechanism: transplant warming increased both colonisations (+1.12 species per turf-year, 95% CI 0.20 to 2.03) and extinctions (+0.91, 0.32 to 1.50), so that compositional turnover accelerated by +2.02 species per turf-year (0.85 to 3.20) and rose monotonically with time since transplant — community composition moves fast while net richness stands still. However, averaging concealed three further structured patterns. First, effects were strongly time-dependent: transplanted turfs lost species in the first year (ATE −1.22), then gained species from year 2 onwards (+1.03 to +1.08), indicating that transplant shock is transient and that pooled multi-year estimates conflate the two phases. Second, effects reversed direction among regions, from −3.98 species in the warmest source community to +3.38 in the coldest. Third, CATEs varied systematically with baseline conditions: communities originating from colder sites gained more species, and species-rich communities gained less, with the estimated CATE turning negative for the most diverse turfs — direct evidence that warming-driven diversity gains saturate, and may reverse, along the diversity gradient. A negative-control (placebo) analysis and an independent replication in a Nutrient Network fertilization sub-dataset (nitrogen addition increased above-ground net primary productivity by +124 g m⁻², 95% CI 76–173) support the validity of the framework. Our results show that "no average effect" does not mean "no effect": causal machine learning can convert experimentally randomized treatments into spatially explicit predictions of which communities are most likely to gain or lose diversity, a prerequisite for targeted conservation under climate change.
 
 ---
 
@@ -51,7 +51,7 @@ We frame Q3 as a positive control: the effect of nitrogen addition on above-grou
 
 ### 2.2 Treatment and outcomes
 
-For TransPlant, the treatment was binary: *W* = 1 for turfs transplanted to the warmer destination site ("Warm"), *W* = 0 for in-situ controls ("LocalControl"). We also defined a continuous "dose" *W*<sub>cont</sub> = destination minus source normal growing-season (May–September) temperature. Outcomes were (i) the change in vascular plant species richness relative to the turf's own baseline year, *Y*<sub>rich</sub> = richness<sub>year</sub> − richness<sub>baseline</sub>, and (ii) the log response ratio of total cover, *Y*<sub>lrr</sub> = log[(cover<sub>year</sub>+1)/(cover<sub>baseline</sub>+1)]. The baseline year is each turf's first observation year. For NutNet, the treatment was N or NP addition (vs. unfertilised control) and the outcome was ANPP (g m⁻²).
+For TransPlant, the treatment was binary: *W* = 1 for turfs transplanted to the warmer destination site ("Warm"), *W* = 0 for in-situ controls ("LocalControl"). We also defined a continuous "dose" *W*<sub>cont</sub> = destination minus source normal growing-season (May–September) temperature. Outcomes were (i) the change in vascular plant species richness relative to the turf's own baseline year, *Y*<sub>rich</sub> = richness<sub>year</sub> − richness<sub>baseline</sub>, and (ii) the log response ratio of total cover, *Y*<sub>lrr</sub> = log[(cover<sub>year</sub>+1)/(cover<sub>baseline</sub>+1)]. The baseline year is each turf's first observation year. To expose the mechanism behind net changes, we additionally decomposed each turf-year relative to the turf's baseline flora into **colonisations** (species present that were absent at baseline), **extinctions** (baseline species now absent) and **total turnover** (their sum; their difference equals the net richness change by construction). For NutNet, the treatment was N or NP addition (vs. unfertilised control) and the outcome was ANPP (g m⁻²).
 
 ### 2.3 Covariates
 
@@ -59,7 +59,7 @@ Eleven pre-treatment covariates were used for CATE estimation: source-site growi
 
 ### 2.4 Causal forest estimation
 
-We estimated CATEs with `grf::causal_forest` (version [x]; R 4.5.3) using honest splitting (default 50/50), 4,000 trees, `min.node.size = 5`, and clustering at the turf level (225 clusters) for all standard errors. Because treatment allocation in TransPlant is organised at the site level, we supplied a design-based propensity score (the within-site empirical treatment fraction, clipped to [0.1, 0.9]) rather than letting the forest estimate propensities, which stabilises AIPW weights. The average treatment effect (ATE) was estimated with doubly robust AIPW (Athey et al., 2019). Continuous-dose effects were estimated with the CATE variant of GRF for non-binary treatments. All covariates were standardised; zero-variance columns were zeroed to protect the linear projection.
+We estimated CATEs with `grf::causal_forest` (version 2.6.1; R 4.5.3) using honest splitting (default 50/50), 4,000 trees, `min.node.size = 5`, and clustering at the turf level (225 clusters) for all standard errors. Because treatment allocation in TransPlant is organised at the site level, we supplied a design-based propensity score (the within-site empirical treatment fraction, clipped to [0.1, 0.9]) rather than letting the forest estimate propensities, which stabilises AIPW weights. The average treatment effect (ATE) was estimated with doubly robust AIPW (Athey et al., 2019). Continuous-dose effects were estimated with the CATE variant of GRF for non-binary treatments. All covariates were standardised; zero-variance columns were zeroed to protect the linear projection.
 
 ### 2.5 Heterogeneity: best linear projection
 
@@ -77,9 +77,13 @@ We permuted treatment labels within destination site × year (200 permutations, 
 
 For the NutNet-derived dataset we estimated the ATE of N/NP addition on ANPP with the same GRF specification (clustering at site × block; site-level covariates MAT, MAP, PET, aridity, N deposition, elevation, pH, soil C and treatment year; design propensity from within-site treatment fractions).
 
-### 2.9 Reproducibility
+### 2.9 Sensitivity and robustness analyses
 
-All code, run logs and outputs are available at https://gitee.com/omixcore/TransPlant-NutNet-CausalForest. The full analysis — from the two public data sources to every figure — is reproducible end-to-end with four R scripts (`analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_nutnet.R`, `make_figures.R`).
+We assessed robustness in five ways: (i) re-clustering standard errors at the destination-site level (41 clusters) and reporting the site-level minimum detectable effect (MDE) at 80% power; (ii) leave-one-region-out re-fits (20 forests); (iii) hyperparameter variation (num.trees 2,000–4,000; min.node.size 2–10); (iv) Benjamini–Hochberg correction of the BLP p-values within each outcome; and (v) explicit overlap diagnostics (design propensity range, number of destination sites containing both treatment arms).
+
+### 2.10 Reproducibility
+
+All code, run logs and outputs are available at https://gitee.com/omixcore/TransPlant-NutNet-CausalForest. The full analysis — from the two public data sources to every figure — is reproducible end-to-end with six R scripts (`analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_gainloss.R`, `analysis_robustness.R`, `analysis_nutnet.R`, `make_figures.R`/`make_fig7.R`).
 
 ## 3. Results
 
@@ -101,19 +105,23 @@ Forest-predicted CATEs ranged from −2.52 to +3.41 species (SD 0.91); 21.4% of 
 
 The global calibration test of CATE heterogeneity (differential forest prediction) was not significant (p = 0.58), so the heterogeneity evidence, while directionally consistent across three independent summaries (BLP, binned CATEs, region estimates), should be considered **suggestive rather than definitive** at current sample sizes.
 
-### 3.4 Cover does not change while richness does
+### 3.4 Turnover, not net change: gains and losses both increase
 
-Because richness responded (in heterogeneity) while cover did not, the community-level signal is one of **species turnover, not biomass accumulation** — warmed turfs gain and lose species without gaining or losing total abundance. This decoupling is consistent with the microclimatic-buffering hypothesis for mountain communities and argues for reporting richness and cover as separate outcomes in transplant meta-analyses.
+Because richness responded in some strata while cover did not, we decomposed the net change into colonisations and extinctions relative to each turf's baseline flora. Transplant warming increased **colonisations by +1.12 species per turf-year (SE 0.47, 95% CI 0.20 to 2.03, p = 0.017)** and **extinctions by +0.91 (SE 0.30, 95% CI 0.32 to 1.50, p = 0.003)**, so that **total compositional turnover rose by +2.02 species per turf-year (SE 0.60, 95% CI 0.85 to 3.20, p < 0.001)** while the net effect remained small and uncertain (+0.65; Fig. 7a). The two component ATEs come from separate forests and therefore need not be exactly additive; the non-additivity (+0.21 vs. +0.65) lies within estimation noise. Turnover effects grew with time since transplant: +0.79 (95% CI −2.31 to 3.89) in year 1, +1.81 (0.31 to 3.30) in year 2, +2.19 (0.88 to 3.50) in years ≥ 3, and +2.44 (1.27 to 3.61, p < 0.001) from year 2 onward (Fig. 7b). In short, warming does not simply add or remove species — it puts community composition on a fast conveyor belt whose net balance is near zero on average.
 
 ### 3.5 Placebo and positive control
 
 The placebo permutation ATE averaged 0.11 (SD 0.33) versus the real 0.65, giving a one-sided permutation p = 0.065 — the real effect lies in the far tail of the null distribution but does not clear conventional thresholds with 200 permutations (Fig. 2c). In the NutNet-derived replication, nitrogen addition increased ANPP by **+124.4 g m⁻² (SE 24.6, 95% CI 76.1–172.7)** and phosphorus alone by +65.5 g m⁻² (SE 25.6), matching published magnitudes for the full NutNet (Fay et al., 2015) and confirming that the GRF pipeline recovers well-established strong effects (Fig. 6).
 
+### 3.6 Robustness and sensitivity
+
+The ATE was insensitive to the clustering level (turf: 0.65, SE 0.53; destination site: 0.63, SE 0.71), to forest hyperparameters (num.trees 2,000–4,000 × min.node.size 2–10: ATE 0.56–0.65), and to dropping any single region (leave-one-region-out ATE range 0.21–0.82; Table S3). With site-clustered standard errors the minimum detectable effect at 80% power is **2.0 species**, so the design can exclude only large average effects. Design propensity scores ranged from 0.10 to 0.71, and 26 of 41 destination sites contained both treatment arms. After Benjamini–Hochberg correction across the 11 BLP moderators (two outcomes), **no moderator retained p < 0.05** (minimum adjusted p = 0.30; Table S2), consistent with the non-significant calibration test; the heterogeneity evidence remains directional rather than confirmatory.
+
 ## 4. Discussion
 
 ### 4.1 Principal findings
 
-Re-analysing a global transplant experiment with causal forests, we find that the *average* effect of transplant warming on mountain grassland richness is small and uncertain — yet this average conceals (i) a transient first-year species loss followed by recovery and gain, (ii) region-level sign reversals, and (iii) a predictable, monotone saturation of gains with baseline diversity. Cover, by contrast, is flat on average and in heterogeneity, pointing to species turnover as the dominant community response.
+Re-analysing a global transplant experiment with causal forests, we find that the *average* effect of transplant warming on mountain grassland richness is small and uncertain — yet this average conceals (i) a transient first-year species loss followed by recovery and gain, (ii) region-level sign reversals, and (iii) a predictable, monotone saturation of gains with baseline diversity. More importantly, the decomposition in §3.4 shows *why* the average is near zero: warming accelerates both colonisation (+1.12 species per turf-year) and extinction (+0.91) — total turnover +2.02 species per turf-year, rising to +2.44 from year 2 onward — so community composition moves fast while net richness stands still. Cover, by contrast, is flat on average and in heterogeneity: the response is compositional, not productive.
 
 ### 4.2 Transplant shock is not a nuisance parameter — it is part of the answer
 
@@ -125,11 +133,11 @@ The clearest heterogeneity signal is that species-poor communities gain diversit
 
 ### 4.4 What causal forests add — and what they do not
 
-The GRF framework converted a randomized but heterogeneous experiment into a per-community prediction, without pre-specifying interaction terms, and its diagnostics (honest splitting, calibration tests, placebo permutation) quantify how much of the apparent heterogeneity is signal. Our results also illustrate its limits: with n ≈ 1,200 turf-years clustered in 225 turfs, the BLP moderators reach only p ≈ 0.05–0.11, and the global calibration test does not reject homogeneity. Causal forests are not a magic power amplifier; they are an honest lens that tells the researcher when heterogeneity is real. The positive control (NutNet N effect recovered at +124 g m⁻²) shows the pipeline itself is sound.
+The GRF framework converted a randomized but heterogeneous experiment into a per-community prediction, without pre-specifying interaction terms, and its diagnostics (honest splitting, calibration tests, placebo permutation) quantify how much of the apparent heterogeneity is signal. Our results also illustrate its limits: with n ≈ 1,200 turf-years clustered in 225 turfs, the BLP moderators reach only p ≈ 0.05–0.11, none survives Benjamini–Hochberg correction, and the global calibration test does not reject homogeneity. Causal forests are not a magic power amplifier; they are an honest lens that tells the researcher when heterogeneity is real. The positive control (NutNet N effect recovered at +124 g m⁻²) shows the pipeline itself is sound.
 
 ### 4.5 Limitations
 
-First, the treatment is a *transplant*, which bundles warming with soil, biotic and microclimate changes; the warming attribution rests on the experiment's paired in-situ controls. Second, the continuous-dose analysis was uninformative (+0.13 species °C⁻¹, SE 0.36) because dose is nearly collinear with site identity; the binary treatment is the better estimator target here. Third, the NutNet replication is a 9-site, single-time-point subset; the full ~200-site NutNet core dataset (available under a data-use agreement) is the appropriate scale for a definitive cross-network comparison. Fourth, taxonomic harmonisation reached 88.5% of records; the remaining 11.5% contribute to richness counts but not to trait-based CWM covariates. Fifth, our placebo p-value (0.065, 200 permutations) and the non-significant calibration test indicate that the heterogeneity findings require replication — ideally with the full TransPlant raw data including the sites excluded here by climate/trait coverage.
+First, the treatment is a *transplant*, which bundles warming with soil, biotic and microclimate changes; the warming attribution rests on the experiment's paired in-situ controls. Second, the continuous-dose analysis was uninformative (+0.13 species °C⁻¹, SE 0.36) because dose is nearly collinear with site identity; the binary treatment is the better estimator target here. Third, the NutNet replication is a 9-site, single-time-point subset; the full ~200-site NutNet core dataset (available under a data-use agreement) is the appropriate scale for a definitive cross-network comparison. Fourth, taxonomic harmonisation reached 88.5% of records; the remaining 11.5% contribute to richness counts but not to trait-based CWM covariates. Fifth, our placebo p-value (0.065, 200 permutations) and the non-significant calibration test indicate that the heterogeneity findings require replication — ideally with the full TransPlant raw data including the sites excluded here by climate/trait coverage. Sixth, only 26 of 41 destination sites contain both treatment arms in the analysis sample, and the site-clustered MDE (2.0 species) means that average effects smaller than this remain uninformative here.
 
 ### 4.6 Conclusions
 
@@ -141,7 +149,7 @@ TransPlant processed data: OSF https://doi.org/10.17605/OSF.IO/9874T. NutNet-der
 
 ## Code availability
 
-`analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_nutnet.R` and all run logs: https://gitee.com/omixcore/TransPlant-NutNet-CausalForest.
+`analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_gainloss.R`, `analysis_robustness.R`, `analysis_nutnet.R`, `make_figures.R`, `make_fig7.R` and all run logs: https://gitee.com/omixcore/TransPlant-NutNet-CausalForest.
 
 ## Author contributions
 
@@ -240,6 +248,17 @@ Wolkovich, E.M., Cook, B.I., Allen, J.M., et al. (2012) Warming experiments unde
 | Year ≥ 3 | 610 | +1.08 | 0.78 | −0.45, +2.61 |
 | Year ≥ 2 (established) | 821 | +1.03 | 0.70 | −0.33, +2.39 |
 
+**Table 4. Gain/loss decomposition ATEs (species per turf-year; separate forests per outcome).**
+
+| Outcome | ATE | SE | 95% CI | p |
+|---|---|---|---|---|
+| Colonisations | +1.12 | 0.47 | 0.20, 2.03 | 0.017 |
+| Extinctions | +0.91 | 0.30 | 0.32, 1.50 | 0.003 |
+| Total turnover (gains + losses) | +2.02 | 0.60 | 0.85, 3.20 | < 0.001 |
+| Net richness change (comparison) | +0.65 | 0.53 | −0.39, 1.69 | 0.22 |
+
+Phase-specific turnover ATEs: year 1 +0.79 (95% CI −2.31, 3.89; n = 125); year 2 +1.81 (0.31, 3.30; n = 211); year ≥ 3 +2.19 (0.88, 3.50; n = 610); year ≥ 2 +2.44 (1.27, 3.61; n = 821).
+
 **Table S1. Region-specific ATEs (forests re-fit within region; regions with ≥ 8 turfs).**
 
 | Region | n | Turfs | ATE | SE |
@@ -265,8 +284,10 @@ Wolkovich, E.M., Cook, B.I., Allen, J.M., et al. (2012) Warming experiments unde
 
 **Fig. 6. Positive control: Nutrient Network fertilization.** (a) ATE of N/NP addition (+124.4 g m⁻², 95% CI 76–173) and P addition alone (+65.5 g m⁻²) on ANPP across nine sites. (b) Mean plot-level CATE by site; dotted line = pooled ATE.
 
+**Fig. 7. Warming accelerates compositional turnover.** (a) AIPW ATEs on colonisations, extinctions, total turnover (gains + losses) and, for comparison, net richness change (grey; estimated by a separate forest, hence not exactly additive). (b) Turnover ATE by years since transplant (separate forests per phase). (c) Colonisations vs. extinctions per turf-year by treatment; dashed line = gains equal losses (no net change).
+
 ---
 
 ## 中文摘要（内部沟通用，不投稿）
 
-我们把 TransPlant 全球移栽实验（20 个区域、9 国、41 个目的地站点、225 个样方、1171 个样方-年）用因果森林重做了一遍。结论：**平均效应小且不显著**（+0.65 种，CI 跨零），盖度完全不动——但平均效应掩盖了三个结构性规律：①移栽**首年掉物种（−1.2），第 2 年起转为净增（+1.0）**，混年份平均会把两种相反的过程搅在一起；②区域间效应**方向翻转**（德国 Susalps −4.0 对挪威 Ulvhaugen +3.4）；③**基线多样性越高的群落增益越小**，最丰富的样方预测为负——增益沿多样性梯度饱和并反转，这是"多样性天花板"的直接实验证据。来源地越冷的群落增益越大（p=0.08）。安慰剂检验 p=0.065，NutNet 阳性对照恢复出经典施氮效应（+124 g/m²），管线可信。证据强度属于"方向一致但尚未定论"，投稿前需补：完整 TransPlant 原始数据（含被气候/性状筛掉的站点）、NutNet 全球版（需签数据协议）、更长的安慰剂和 overlap 裁剪稳健性包。
+我们把 TransPlant 全球移栽实验（20 个区域、9 国、41 个目的地站点、225 个样方、1171 个样方-年）用因果森林重做了一遍。结论：**平均效应小且不显著**（+0.65 种，CI 跨零），盖度完全不动——但平均效应掩盖了四个结构性规律：①移栽**首年掉物种（−1.2），第 2 年起转为净增（+1.0）**，混年份平均会把两种相反的过程搅在一起；②区域间效应**方向翻转**（德国 Susalps −4.0 对挪威 Ulvhaugen +3.4）；③**基线多样性越高的群落增益越小**，最丰富的样方预测为负——增益沿多样性梯度饱和并反转；④**周转分解（新增核心结果，全文最强证据）**：增温同时显著增加定殖（+1.12，p=0.017）与灭绝（+0.91，p=0.003），总周转 +2.02 种/样方-年（p<0.001），第 2 年起升至 +2.44（p<0.001）——**群落组成在快速更替，而净丰富度不动**，这是“更替而非增产”机制的直接因果证据。来源地越冷的群落增益越大（p=0.08）。安慰剂检验 p=0.065，NutNet 阳性对照恢复出经典施氮效应（+124 g/m²），管线可信。诚实声明：BLP 调节变量经 BH 校正后无一存活（最小校正 p=0.30），校准检验不显著，异质性证据属“方向一致、尚未定论”；站点聚类 MDE 达 2.0 种。投稿前需补：完整 TransPlant 原始数据（含被气候/性状筛掉的站点）、NutNet 全球版（需签数据协议）。

@@ -1,0 +1,105 @@
+During startup - Warning messages:
+1: Setting LC_COLLATE=C.UTF-8 failed 
+2: Setting LC_CTYPE=C.UTF-8 failed 
+3: Setting LC_MONETARY=C.UTF-8 failed 
+4: Setting LC_TIME=C.UTF-8 failed 
+
+############ (1) BLP + BH-FDR ############
+
+-- rich --
+   outcome        term     est     se       p   p_BH
+1     rich (Intercept)  0.6457 0.5314 0.22459 0.4117
+2     rich   orig_temp -1.3606 0.7758 0.07974 0.2955
+3     rich   orig_prec -1.9895 1.2349 0.10744 0.2955
+4     rich    d_temp_y  0.4090 0.8366 0.62502 0.6331
+5     rich    d_prec_y -1.2992 1.1984 0.27856 0.4377
+6     rich      d_elev  0.6975 0.7398 0.34602 0.4758
+7     rich   base_rich -1.7441 0.8946 0.05148 0.2955
+8     rich     cwm_Hgt  1.7364 1.2350 0.15998 0.3520
+9     rich     cwm_Npc -0.5074 0.8383 0.54513 0.6331
+10    rich  prop_woody -0.2715 0.5687 0.63314 0.6331
+11    rich        Year  0.6094 0.3543 0.08573 0.2955
+
+-- lrr --
+   outcome        term       est      se      p   p_BH
+1      lrr (Intercept) -0.017415 0.04434 0.6946 0.7640
+2      lrr   orig_temp -0.125849 0.10681 0.2389 0.7536
+3      lrr   orig_prec  0.079134 0.17572 0.6526 0.7640
+4      lrr    d_temp_y -0.075775 0.05401 0.1609 0.7536
+5      lrr    d_prec_y  0.074949 0.17803 0.6738 0.7640
+6      lrr      d_elev -0.065262 0.04787 0.1730 0.7536
+7      lrr   base_rich  0.029139 0.05018 0.5615 0.7640
+8      lrr     cwm_Hgt  0.007168 0.03572 0.8410 0.8410
+9      lrr     cwm_Npc -0.066580 0.06084 0.2740 0.7536
+10     lrr  prop_woody -0.019188 0.04342 0.6586 0.7640
+11     lrr        Year -0.037278 0.04079 0.3610 0.7640
+
+############ (2) Calibration test ############
+
+-- rich --
+
+Best linear fit using forest predictions (on held-out data)
+as well as the mean forest prediction as regressors, along
+with one-sided heteroskedasticity-robust (HC3) SEs:
+
+                               Estimate Std. Error t value Pr(>t)
+mean.forest.prediction          1.03288    0.96716  1.0679 0.1429
+differential.forest.prediction -0.18038    0.86864 -0.2077 0.5822
+
+
+-- lrr --
+
+Best linear fit using forest predictions (on held-out data)
+as well as the mean forest prediction as regressors, along
+with one-sided heteroskedasticity-robust (HC3) SEs:
+
+                               Estimate Std. Error t value Pr(>t)
+mean.forest.prediction          1.59973    4.04632  0.3954 0.3463
+differential.forest.prediction -0.80305    1.39528 -0.5755 0.7175
+
+
+############ (3) Overlap / propensity ############
+W.hat (design) range: 0.100 - 0.714 | mean 0.455
+treated fraction: 0.437 | n sites: 41 | sites with both arms: 26
+
+############ (4) Cluster level: turf vs site ############
+turf-clustered: ATE 0.6457 SE 0.5305
+site-clustered: ATE 0.6313 SE 0.7140
+MDE (80% power, site-clustered SE) = 2.00 species
+
+############ (5) Leave-one-region-out ############
+                          dropped    n   ate    se     lo   hi
+estimate...1           CH_Calanda 1141 0.565 0.529 -0.472 1.60
+estimate...2          CH_Calanda2 1160 0.709 0.533 -0.335 1.75
+estimate...3             CH_Lavey 1150 0.549 0.527 -0.484 1.58
+estimate...4           CN_Damxung 1156 0.688 0.532 -0.356 1.73
+estimate...5            CN_Gongga  897 0.697 0.664 -0.605 2.00
+estimate...6            CN_Heibei 1123 0.708 0.445 -0.165 1.58
+estimate...7           DE_Grainau 1159 0.593 0.533 -0.451 1.64
+estimate...8           DE_Susalps 1124 0.820 0.530 -0.220 1.86
+estimate...9         DE_TransAlps 1146 0.571 0.539 -0.486 1.63
+estimate...10         FR_AlpeHuez 1159 0.597 0.532 -0.446 1.64
+estimate...11         FR_Lautaret 1159 0.618 0.509 -0.379 1.61
+estimate...12          IN_Kashmir 1165 0.618 0.531 -0.423 1.66
+estimate...13     IT_MatschMazia1 1159 0.545 0.530 -0.495 1.58
+estimate...14     IT_MatschMazia2 1159 0.508 0.531 -0.532 1.55
+estimate...15       NO_Gudmedalen 1021 0.674 0.574 -0.451 1.80
+estimate...16       NO_Lavisdalen 1021 0.614 0.584 -0.531 1.76
+estimate...17 NO_Skjellingahaugen 1022 0.590 0.584 -0.555 1.74
+estimate...18        NO_Ulvhaugen 1022 0.212 0.572 -0.909 1.33
+estimate...19           SE_Abisko 1147 0.518 0.533 -0.528 1.56
+estimate...20         US_Colorado 1159 0.548 0.541 -0.512 1.61
+
+LOO ATE range: 0.212 to 0.820 | full-sample ATE: 0.646
+
+############ (6) Hyperparameter sensitivity ############
+             num.trees min.node.size   ate    se
+estimate...1      2000             2 0.648 0.526
+estimate...2      4000             2 0.649 0.528
+estimate...3      2000             5 0.562 0.527
+estimate...4      4000             5 0.580 0.528
+estimate...5      2000            10 0.620 0.526
+estimate...6      4000            10 0.624 0.528
+
+wrote blp_fdr.csv / cluster_sensitivity.csv / leave_one_region_out.csv /
+      hyperparameter_sensitivity.csv / overlap_what.csv / session_info.txt
