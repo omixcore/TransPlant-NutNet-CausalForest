@@ -1,0 +1,129 @@
+During startup - Warning messages:
+1: Setting LC_COLLATE=C.UTF-8 failed 
+2: Setting LC_CTYPE=C.UTF-8 failed 
+3: Setting LC_MONETARY=C.UTF-8 failed 
+4: Setting LC_TIME=C.UTF-8 failed 
+### 站点生长季温度 ###
+sites with T_gs: 43 | range: 3.13 - 17.47 deg C
+
+### STP 可得性（leave-one-site-out, n_use >= 2）###
+species total: 1268 | with STP: 410 (32.3%)
+
+### CTI 覆盖率 ###
+turf-years: 1183 | 盖度加权覆盖率 中位: 0.949 | 均值: 0.837 
+物种数覆盖率 中位: 0.903 
+Warning message:
+In left_join(., base_sp %>% dplyr::select(turf_key, SpeciesName),  :
+  Detected an unexpected many-to-many relationship between `x` and `y`.
+i Row 1 of `x` matches multiple rows in `y`.
+i Row 1 of `y` matches multiple rows in `x`.
+i If a many-to-many relationship is expected, set `relationship =
+  "many-to-many"` to silence this warning.
+
+### 定向更替指标 ###
+turf-years with d_stp defined: 858 | mean d_stp: 0.336 
+
+### 合并后 ###
+rows: 1171 | d_cti 非缺失: 1171 | d_cti_ok 非缺失: 1061 | d_stp 非缺失: 858 
+
+== dCTI (community temperature index shift, deg C) ==
+n=1061 clusters=206 ATE=0.0705 SE=0.0359 95%CI=[0.0001, 0.1409] p=0.0497
+
+== dSTP (colonist STP - extinct STP, deg C) ==
+n=858 clusters=218 ATE=0.1588 SE=0.0875 95%CI=[-0.0127, 0.3302] p=0.0695
+
+== dCWM SLA (mm2/mg) ==
+n=1171 clusters=225 ATE=3.6124 SE=3.0530 95%CI=[-2.3715, 9.5964] p=0.2367
+
+== dCWM height (cm) ==
+n=1171 clusters=225 ATE=0.8288 SE=0.5502 95%CI=[-0.2497, 1.9072] p=0.1320
+
+== dCWM leaf N (%) ==
+n=1171 clusters=225 ATE=-0.5983 SE=0.2873 95%CI=[-1.1614, -0.0353] p=0.0373
+
+== dCWM woodiness (proportion) ==
+n=1171 clusters=225 ATE=-0.0087 SE=0.0106 95%CI=[-0.0295, 0.0121] p=0.4115
+# A tibble: 6 x 10
+  outcome  role      n      est     se       lo      hi      p p_one_sided  p_BH
+  <chr>    <chr> <int>    <dbl>  <dbl>    <dbl>   <dbl>  <dbl>       <dbl> <dbl>
+1 dCTI_de~ prim~  1061  0.0705  0.0359  8.71e-5  0.141  0.0497      0.0249 0.139
+2 dSTP_de~ seco~   858  0.159   0.0875 -1.27e-2  0.330  0.0695      0.0348 0.139
+3 dCWM_SLA expl~  1171  3.61    3.05   -2.37e+0  9.60   0.237       0.118  0.284
+4 dCWM_Hgt expl~  1171  0.829   0.550  -2.50e-1  1.91   0.132       0.0660 0.198
+5 dCWM_Npc expl~  1171 -0.598   0.287  -1.16e+0 -0.0353 0.0373      0.0186 0.139
+6 dCWM_wo~ expl~  1171 -0.00871 0.0106 -2.95e-2  0.0121 0.412       0.206  0.412
+
+### 气候追踪比例 ###
+施加的平均增温 = 2.40 deg C | dCTI = 0.070 deg C | 追踪 = 2.9% of imposed warming
+
+### BLP (dCTI / dSTP) ###
+                                           outcome        term       est     se
+1  dCTI (community temperature index shift, deg C) (Intercept)  0.070470 0.0375
+2  dCTI (community temperature index shift, deg C)   orig_temp -0.097603 0.0677
+3  dCTI (community temperature index shift, deg C)   orig_prec -0.156574 0.1115
+4  dCTI (community temperature index shift, deg C)    d_temp_y -0.036185 0.0503
+5  dCTI (community temperature index shift, deg C)    d_prec_y -0.124801 0.1076
+6  dCTI (community temperature index shift, deg C)      d_elev -0.003905 0.0468
+7  dCTI (community temperature index shift, deg C)   base_rich -0.008902 0.0471
+8  dCTI (community temperature index shift, deg C)     cwm_Hgt  0.023687 0.0160
+9  dCTI (community temperature index shift, deg C)     cwm_Npc -0.001702 0.0536
+10 dCTI (community temperature index shift, deg C)  prop_woody  0.000208 0.0329
+11 dCTI (community temperature index shift, deg C)        Year  0.043699 0.0270
+12        dSTP (colonist STP - extinct STP, deg C) (Intercept)  0.158769 0.0885
+13        dSTP (colonist STP - extinct STP, deg C)   orig_temp  0.067199 0.1105
+14        dSTP (colonist STP - extinct STP, deg C)   orig_prec  0.264428 0.2236
+15        dSTP (colonist STP - extinct STP, deg C)    d_temp_y  0.074929 0.1114
+16        dSTP (colonist STP - extinct STP, deg C)    d_prec_y  0.357083 0.2069
+17        dSTP (colonist STP - extinct STP, deg C)      d_elev  0.051394 0.1104
+18        dSTP (colonist STP - extinct STP, deg C)   base_rich  0.134113 0.1170
+19        dSTP (colonist STP - extinct STP, deg C)     cwm_Hgt -0.255811 0.0871
+20        dSTP (colonist STP - extinct STP, deg C)     cwm_Npc  0.034067 0.1257
+21        dSTP (colonist STP - extinct STP, deg C)  prop_woody  0.094785 0.1062
+22        dSTP (colonist STP - extinct STP, deg C)        Year  0.041716 0.0651
+         p   p_BH
+1  0.06033 0.3532
+2  0.14947 0.3532
+3  0.16055 0.3532
+4  0.47175 0.7413
+5  0.24653 0.4520
+6  0.93348 0.9950
+7  0.85015 0.9950
+8  0.13957 0.3532
+9  0.97466 0.9950
+10 0.99496 0.9950
+11 0.10569 0.3532
+12 0.07322 0.3106
+13 0.54316 0.6639
+14 0.23722 0.5543
+15 0.50137 0.6639
+16 0.08471 0.3106
+17 0.64179 0.7060
+18 0.25198 0.5543
+19 0.00342 0.0376
+20 0.78636 0.7864
+21 0.37220 0.6639
+22 0.52207 0.6639
+
+== dCTI | year 1 ==
+n=96 clusters=96 ATE=0.0212 SE=0.0433 95%CI=[-0.0637, 0.1060] p=0.6252
+
+== dCTI | year 2 ==
+n=194 clusters=194 ATE=0.0717 SE=0.0453 95%CI=[-0.0170, 0.1603] p=0.1133
+
+== dCTI | year >= 3 ==
+n=579 clusters=192 ATE=0.1145 SE=0.0526 95%CI=[0.0113, 0.2176] p=0.0297
+
+== dCTI | year >= 2 ==
+n=773 clusters=200 ATE=0.1021 SE=0.0478 95%CI=[0.0084, 0.1958] p=0.0328
+
+### dCTI by phase ###
+              phase   n    est     se       lo    hi      p
+estimate     year 1  96 0.0212 0.0433 -0.06373 0.106 0.6252
+estimate1    year 2 194 0.0717 0.0453 -0.01705 0.160 0.1133
+estimate2 year >= 3 579 0.1145 0.0526  0.01128 0.218 0.0297
+estimate3 year >= 2 773 0.1021 0.0478  0.00837 0.196 0.0328
+
+== dCTI sensitivity (no leave-one-site-out) ==
+n=1171 clusters=225 ATE=0.0475 SE=0.0297 95%CI=[-0.0108, 0.1057] p=0.1102
+
+wrote cti_ate.csv / cti_blp.csv / cti_panel.csv / cti_results.rds

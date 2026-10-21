@@ -112,6 +112,48 @@ MDE at 80% power (site-clustered SE): **2.0 species**.
 
 ---
 
+## Table S8. Best linear projection of the ΔCTI and ΔSTP CATEs (directional outcomes; §3.3)
+
+p<sub>BH</sub> is the Benjamini–Hochberg adjustment within each outcome's 11 moderators. No moderator survives correction for ΔCTI; for ΔSTP, baseline CWM height survives (p<sub>BH</sub> = 0.038) and is treated as exploratory.
+
+| Outcome | Moderator | Estimate | SE | p | p<sub>BH</sub> |
+|---|---|---|---|---|---|
+| ΔCTI (°C) | Intercept | 0.070 | 0.037 | 0.060 | 0.353 |
+| ΔCTI | Source growing-season temperature | −0.098 | 0.068 | 0.149 | 0.353 |
+| ΔCTI | Source growing-season precipitation | −0.157 | 0.112 | 0.161 | 0.353 |
+| ΔCTI | Destination-year temperature anomaly | −0.036 | 0.050 | 0.472 | 0.741 |
+| ΔCTI | Destination-year precipitation anomaly | −0.125 | 0.108 | 0.247 | 0.452 |
+| ΔCTI | Elevation difference | −0.004 | 0.047 | 0.933 | 0.995 |
+| ΔCTI | Baseline species richness | −0.009 | 0.047 | 0.850 | 0.995 |
+| ΔCTI | CWM vegetative height | 0.024 | 0.016 | 0.140 | 0.353 |
+| ΔCTI | CWM leaf N | −0.002 | 0.054 | 0.975 | 0.995 |
+| ΔCTI | Woody cover proportion | 0.000 | 0.033 | 0.995 | 0.995 |
+| ΔCTI | Calendar year | 0.044 | 0.027 | 0.106 | 0.353 |
+| ΔSTP (°C) | Intercept | 0.159 | 0.089 | 0.073 | 0.311 |
+| ΔSTP | Source growing-season temperature | 0.067 | 0.111 | 0.543 | 0.664 |
+| ΔSTP | Source growing-season precipitation | 0.264 | 0.224 | 0.237 | 0.554 |
+| ΔSTP | Destination-year temperature anomaly | 0.075 | 0.111 | 0.501 | 0.664 |
+| ΔSTP | Destination-year precipitation anomaly | 0.357 | 0.207 | 0.085 | 0.311 |
+| ΔSTP | Elevation difference | 0.051 | 0.110 | 0.642 | 0.706 |
+| ΔSTP | Baseline species richness | 0.134 | 0.117 | 0.252 | 0.554 |
+| ΔSTP | CWM vegetative height | **−0.256** | 0.087 | **0.003** | **0.038** |
+| ΔSTP | CWM leaf N | 0.034 | 0.126 | 0.786 | 0.786 |
+| ΔSTP | Woody cover proportion | 0.095 | 0.106 | 0.372 | 0.664 |
+| ΔSTP | Calendar year | 0.042 | 0.065 | 0.522 | 0.664 |
+
+---
+
+## Table S9. Sensitivity of the ΔCTI result to the STP definition
+
+| Specification | n | ATE | SE | 95% CI | p |
+|---|---|---|---|---|---|
+| Leave-one-site-out (main, requires ≥ 2 remaining site records) | 1,061 | +0.071 | 0.036 | 0.000, 0.141 | 0.050 |
+| No leave-one-site-out (species recorded at a single site are assigned that site's temperature) | 1,171 | +0.048 | 0.030 | −0.011, 0.106 | 0.110 |
+
+*Relaxing the leave-one-site-out requirement pulls the estimate towards zero rather than away from it, which is the direction expected if the main specification removes a mechanical dilution rather than manufacturing a signal.*
+
+---
+
 ## Supplementary references
 
 Software: R Core Team (2026) R 4.5.3; Tibshirani, Athey & Wager `grf` 2.6.1. Full session information in `project/output/session_info.txt`.
