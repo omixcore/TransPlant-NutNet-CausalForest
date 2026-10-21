@@ -1,0 +1,10 @@
+.libPaths(c("project/rlibs", .libPaths()))
+suppressPackageStartupMessages(library(dplyr))
+res <- readRDS("project/output/cf_results_v3.rds"); d2 <- res$rich$d2
+w <- d2 %>% filter(W_bin == 1)
+cat("warm n:", nrow(w), "warm median dT:", median(w$W_cont), "IQR:", quantile(w$W_cont, c(.25,.75)), "\n")
+cat("warm dT>0 frac:", mean(w$W_cont > 0), "\n")
+cat("regions:", paste(sort(unique(d2$Region)), collapse=", "), "\n")
+cat("countries:", length(unique(sub("_.*", "", unique(d2$Region)))), "\n")
+cat("baseline richness mean/median:", mean(d2$base_rich), median(d2$base_rich), "\n")
+cat("CATE frac<0:", mean(predict(res$rich$cf)$predictions < 0), "\n")

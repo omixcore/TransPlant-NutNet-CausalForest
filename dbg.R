@@ -1,0 +1,13 @@
+.libPaths(c("project/rlibs", .libPaths()))
+suppressPackageStartupMessages(library(dplyr))
+res <- readRDS("project/output/cf_results_v3.rds"); d2 <- res$rich$d2
+cat("d2 names:", paste(names(d2), collapse = ","), "\n")
+e <- new.env(); load("project/data/TransPlantNetwork.RData", envir = e)
+dat <- as.data.frame(e$dat)
+cat("dat names:", paste(names(dat), collapse = ","), "\n")
+dat <- dat %>% mutate(turf_key = paste(Region, originSiteID, destSiteID, turfID, sep = "|"))
+bt <- dat %>% group_by(turf_key) %>% summarise(base_year = min(Year), .groups = "drop")
+cat("bt rows:", nrow(bt), "cols:", paste(names(bt), collapse = ","), "\n")
+j <- d2 %>% left_join(bt, by = "turf_key")
+cat("joined cols:", paste(names(j), collapse = ","), "\n")
+cat("match rate:", mean(!is.na(j$base_year)), "\n")
