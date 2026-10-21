@@ -15,7 +15,7 @@
 
 ## 2. Items requiring author input
 
-1. Author names, affiliations, ORCIDs, corresponding author, CRediT roles, competing interests and funding numbers remain placeholders in the manuscript.
+1. Author names, affiliations, ORCIDs, corresponding author, CRediT roles, competing interests and funding numbers are recorded in the manuscript. The submitting author should verify the metadata entered in the portal.
 2. Full NutNet core data require a data-use agreement. The nine-site e247 sample supports a positive-control analysis, not broad network-level inference.
 3. Consider contacting the TransPlant coordinators before formal publication, both for provenance and potential collaboration.
 4. Confirm field permits and acknowledgements relevant to participating sites.

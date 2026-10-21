@@ -1,5 +1,7 @@
 # Supplementary Information
 
+Fei Liang; Pengyu Chen; Xiaofeng Song
+
 **Manuscript:** Downslope transplantation increases plant community turnover while mean richness remains uncertain
 
 **Note.** All values traceable to run logs in `output/` (`run_log_v3.txt`, `run_log_gainloss.txt`, `run_log_robust.txt`, `run_log_event.txt`, `run_log_nutnet.txt`); software: R 4.5.3, grf 2.6.1 (see session_info.txt).

@@ -11,19 +11,17 @@
 
 **Running title:** Turnover after downslope transplantation
 
-**Authors:** Fei Liang²,*; Pengyu Chen¹,†; Xiaofeng Song¹,†
+**Authors:** Fei Liang²; Pengyu Chen¹; Xiaofeng Song¹,*
 
 ¹ North Henan Medical University, Xinxiang 453003, China.
 
 ² Key Laboratory of Tropical Fruit Biology of Ministry of Agriculture, South Subtropical Crops Research Institute, Chinese Academy of Tropical Agricultural Sciences, Zhanjiang, China.
 
-† These authors contributed equally to this work.
+**Author emails:** Fei Liang, fyliangfei@163.com; Pengyu Chen, 15803747006@163.com; Xiaofeng Song, songxiaofeng109@163.com.
 
-**Author emails:** Pengyu Chen, 15803747006@163.com; Xiaofeng Song, songxiaofeng109@163.com.
+**ORCID iDs:** Fei Liang, 0009-0003-6722-5722; Pengyu Chen, 0009-0003-1697-0175; Xiaofeng Song, 0009-0008-4251-2326.
 
-**ORCID iDs:** [To be supplied by the authors.]
-
-**Correspondence:** Fei Liang, fyliangfei@163.com.
+* Correspondence: Xiaofeng Song, songxiaofeng109@163.com.
 
 **Keywords:** causal inference; generalized random forests; heterogeneous treatment effects; transplant experiment; climate change; mountain grassland; species richness; community turnover; Nutrient Network; transient dynamics
 
@@ -200,11 +198,11 @@ Fei Liang: Formal analysis; Visualization; Writing – original draft. Pengyu Ch
 
 ## Acknowledgements
 
-We thank the TransPlant and Nutrient Network communities for collecting and sharing the data. This work was supported by the Henan Province Science and Technology Research Project (Grant No. 252102310465) and the Henan Private Universities Characteristic Development Program (Grant No. SJ2025MBTS03).
+We thank the TransPlant and Nutrient Network communities for collecting and sharing the data. This work was supported by the Henan Province Science and Technology Research Project (Grant No. 252102310465) and the Henan Private Universities Characteristic Development Program (Grant No. SJ2025MBTS03). OpenAI Codex assisted with manuscript drafting and figure reconstruction from recorded analysis outputs; the authors retain responsibility for the analysis, interpretation, and submitted text.
 
 ## Conflict of interest
 
-[To be completed.]
+The authors declare no conflicts of interest.
 
 ---
 
