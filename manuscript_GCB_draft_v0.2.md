@@ -1,6 +1,6 @@
 # Manuscript — target journal: *Global Change Biology*
 
-> **DRAFT v0.3 (2026-10-21) — revised against recorded analysis outputs; co-author and raw-data review pending.**
+> **DRAFT v0.4 (2026-10-21) — revised against recorded analysis outputs; all authors have approved the manuscript.**
 > All statistics are traceable to `output/run_log_v3.txt`, `run_log_event.txt`, `run_log_gainloss.txt`, `run_log_robust.txt`, `run_log_nutnet.txt`
 > (pipelines: `analysis_causal_forest_v3.R`, `analysis_event_time.R`, `analysis_gainloss.R`, `analysis_robustness.R`, `analysis_nutnet.R`, `make_figures.R`, `make_fig7.R`).
 > Reference metadata: `build_references.py` and `references.json`.
@@ -194,7 +194,7 @@ Analysis scripts and recorded outputs: https://github.com/omixcore/TransPlant-Nu
 
 ## Author contributions
 
-Fei Liang: Formal analysis; Visualization; Writing – original draft. Pengyu Chen: Investigation (identification and retrieval of relevant datasets). Xiaofeng Song: Writing – review and editing; Supervision; Funding acquisition.
+Fei Liang: Formal analysis; Visualization; Writing – original draft. Pengyu Chen: Investigation (identification and retrieval of relevant datasets). Xiaofeng Song: Writing – review and editing; Supervision; Funding acquisition. All authors have read and approved the final manuscript.
 
 ## Acknowledgements
 
